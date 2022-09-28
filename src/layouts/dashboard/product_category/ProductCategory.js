@@ -7,6 +7,7 @@ import { Icon } from '@iconify/react';
 import { addCategory, fetchCategories, addSubCategory, fetchSubCategories } from '../../../redux/actions/category_actions';
 import Page from '../../../components/Page';
 import Iconify from '../../../components/Iconify';
+import DeleteCategoryDialog from './component/DeleteCategoryDialog';
 
 
 const Input = styled('input')({
@@ -125,14 +126,19 @@ export default function ProductCategory() {
                         </Grid>
 
                     </Card>
-                    {
-                        categories.length === 0 ?
-                        "No Category"
-                        :
-                        categories.map((category) => (
-                            <Chip label={category.name} color="primary" variant="outlined" />
-                        ))
-                    }
+                    <Grid container spacing={2}>                   
+                        {
+                            categories.length === 0 ?
+                            "No Category"
+                            :
+                            categories.map((category) => (
+                                <Grid item>
+                                    <DeleteCategoryDialog categoryName={category.name} categoryId={category.id} isCategory/>
+                                </Grid>
+                                
+                            ))
+                        }
+                     </Grid>
                    
 
                     {
@@ -185,14 +191,18 @@ export default function ProductCategory() {
                                 
                                 
                                 </Card>   
+                                <Grid container spacing={2}>   
                                 {
                                 subCategories.length === 0 ?
                                 "No Sub Category"
                                 :
                                 subCategories.map((category) => (
-                                    <Chip label={category.name} color="primary" variant="outlined" />
+                                    <Grid item>
+                                        <DeleteCategoryDialog categoryName={category.name} categoryId={category.id} isCategory={false}/>
+                                    </Grid>
                                 ))
                                 }
+                                </Grid>
                             </div>   
 
                             
