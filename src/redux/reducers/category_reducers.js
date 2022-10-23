@@ -5,7 +5,8 @@ const categoryInitialState ={
     categories: [],
     category : [],
     subcategories: [],
-    error : false
+    error : false,
+    errorMessage : []
 }
 
 export const CategoryReducer = (state = categoryInitialState,{type,payload}={})=>{
@@ -21,6 +22,20 @@ export const CategoryReducer = (state = categoryInitialState,{type,payload}={})=
                 ... state,
                 loading : false,
                 subcategories  : payload
+            }
+        case ActionTypes.ERROR_MESSAGE:
+            return {
+                ... state,
+                loading : false,
+                error : true,
+                errorMessage : payload
+            }
+        case ActionTypes.CATEGORY_CLEAN_UP:
+            return {
+                ... state,
+                loading : false,
+                error : false,
+                errorMessage : []
             }
         default:
             return state;

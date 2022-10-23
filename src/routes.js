@@ -17,6 +17,7 @@ import BannerManagement from './layouts/dashboard/banner/BannerManagement';
 import ProductLists from './pages/products/ProductLists';
 import RolesAndPermissions from './layouts/dashboard/rolesAndPermissions/RolesAndPermissions';
 import AddNewUser from './layouts/dashboard/user/AddNewUser';
+import Store from './pages/store/Store';
 
 // ----------------------------------------------------------------------
 
@@ -29,6 +30,7 @@ export default function Router() {
         { path: 'app', element: <DashboardApp /> },
         { path: 'user', element: <User /> },
         { path: 'products', element: <ProductLists/>},
+        { path: 'brand', element: <Store/>},
         { path: 'rolesandpermisions', element: <RolesAndPermissions/>},
         { path: 'addnewusers', element: <AddNewUser/>},
         // { path: 'blog', element: <Blog /> },

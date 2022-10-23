@@ -27,20 +27,34 @@ export const deleteCategory  = (id) => async (dispatch) =>{
   )
 }
 
-export const addCategory = (data) => async (dispatch) =>{
-  const response = await ztrade_api.post("api/category/create",data).then(
-    res=>{
-   
-      if(res.status === 201){
 
-        process.env.REACT_APP_STATUS === "development"  ? 
-        window.location.href = "http://localhost:3000/dashboard/productcategory" 
-        : 
-        window.location.href = "https://talentandjobs-testing.web.app/dashboard/productcategory"
-        
+export const addCategory = (data) => async (dispatch) =>{
+
+  
+    const response = await ztrade_api.post("api/category/create",data).then(
+      res=>{
+     
+        if(res.status === 201){
+
+          dispatch({type:ActionTypes.SUCCESS_MESSAGE,payload: "Successfully Created"})
+          process.env.REACT_APP_STATUS === "development"  ? 
+          window.location.href = "http://localhost:3000/dashboard/productcategory" 
+          : 
+          window.location.href = "https://talentandjobs-testing.web.app/dashboard/productcategory"
+          
+        }
+        else{
+          dispatch({type:ActionTypes.ERROR_MESSAGE,payload: res.error})
+        }
       }
-    }
-  )
+    ).catch(err=>{
+      dispatch({type:ActionTypes.ERROR_MESSAGE,payload: err.response.data})
+    }) 
+  
+}
+
+export const cleanUp = () => (dispatch) =>{
+  dispatch({type:ActionTypes.CATEGORY_CLEAN_UP,payload: ""})
 }
 
 export const fetchSubCategories = () => async (dispatch) => {
@@ -65,7 +79,9 @@ export const addSubCategory = (data) => async (dispatch) =>{
         
       }
     }
-  )
+  ).catch(err=>{
+    dispatch({type:ActionTypes.ERROR_MESSAGE,payload: err.response.data})
+  })
 }
 
 export const deleteSubCategory = (id) => async (dispatch) =>{

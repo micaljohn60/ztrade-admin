@@ -25,3 +25,19 @@ export const fetchSlider = () => async (dispatch) => {
       dispatch({type:ActionTypes.FETCH_SLIDERS,payload:[]  })
     });    
 }
+
+export const deleteSlider = (id) => async (dispatch) =>{
+  const response = await ztrade_api.delete(`api/slider/delete/${id}`).then(
+    res=>{
+   
+      if(res.status === 201){
+
+        process.env.REACT_APP_STATUS === "development"  ? 
+        window.location.href = "http://localhost:3000/dashboard/slider" 
+        : 
+        window.location.href = "https://talentandjobs-testing.web.app/dashboard/slider"
+        
+      }
+    }
+  )
+}

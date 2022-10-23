@@ -8,13 +8,12 @@ import FormControl from '@mui/material/FormControl';
 import FormLabel from '@mui/material/FormLabel';
 import { styled } from '@mui/material/styles';
 import { Icon } from '@iconify/react';
-import Page from '../../../components/Page';
-import Iconify from '../../../components/Iconify';
-import Row from './components/Row'
-import { addSlider, fetchSlider } from '../../../redux/actions/slider_actions'
-import { fetchStores } from '../../../redux/actions/store_actions';
-import SliderListsCard from './components/SliderListsCard';
+import Page from '../../components/Page';
+import Iconify from '../../components/Iconify';
+import StoreList from './components/StoreList';
 
+import { addStore,fetchStores } from '../../redux/actions/store_actions';
+import StoreListCard from './components/StoreListCard';
 
 
 
@@ -41,32 +40,25 @@ const jobCategories = [
     },
 ];
 
-export default function SliderManagement() {
+export default function Store() {
 
     const [brandId, setBrandId] = useState('sales and marketing');
     const [radioValue, setRadioValue] = useState("homescreen")
     const [name, setName] = useState(null)
     const [image, setImage] = useState(null)
 
-    const dispatch = useDispatch()
+    const dispatch = useDispatch();
 
-    const sliders = useSelector((state) => state.slider.sliders);
     const stores = useSelector((state) => state.store.stores);
+    const loading = useSelector((state) => state.store.loading);
 
     const handleClick = (e) => {
         const formData = new FormData();
         formData.append("name", name);
         formData.append("image", image);
+        dispatch(addStore(formData));
 
-        if (radioValue === "homescreen") {
-            formData.append("store_id", 0);
-            dispatch(addSlider(formData))
-        } else {
-            formData.append("store_id", brandId);
-            dispatch(addSlider(formData))
-        }
     }
-
 
     const handleRadioChange = (e) => {
         setRadioValue(e.target.value)
@@ -77,17 +69,16 @@ export default function SliderManagement() {
     };
 
     useEffect(() => {
-        dispatch(fetchSlider())
         dispatch(fetchStores())
     }, [])
 
     return (
         <>
-            <Page title="Create New Image Slider">
+            <Page title="Stores/Brands">
                 <Container>
                     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                         <Typography variant="h4" gutterBottom color="#108992">
-                            Create New Image Slider
+                            Create Store
                         </Typography>
                         <Button
                             variant="contained"
@@ -100,37 +91,6 @@ export default function SliderManagement() {
                     </Stack>
 
                     <Card >
-                        <FormControl >
-                            <FormLabel id="demo-row-radio-buttons-group-label">Select one to add Slider</FormLabel>
-                            <RadioGroup
-                                row
-                                aria-labelledby="demo-row-radio-buttons-group-label"
-                                name="row-radio-buttons-group"
-                                value={radioValue}
-                                onChange={handleRadioChange}
-                            >
-                                <FormControlLabel value="homescreen" control={<Radio />} label="Home Screen" />
-                                <FormControlLabel value="brands" control={<Radio />} label="Brands" />
-
-                            </RadioGroup>
-                        </FormControl>
-
-                        <TextField
-                            id="outlined-select-currency"
-                            select
-                            label="Select"
-                            value={brandId}
-                            onChange={handleChange}
-                            helperText="Please select a Product Sub category"
-                            sx={{ m: 2 }}
-                            disabled={radioValue === "homescreen" ? `true` : false}
-                        >
-                            {stores.map((option) => (
-                                <MenuItem key={option.id} value={option.id} >
-                                    {option.brand_name}
-                                </MenuItem>
-                            ))}
-                        </TextField>
 
                         <Box
                             component="form"
@@ -143,7 +103,7 @@ export default function SliderManagement() {
                             <Box display="flex"
                                 alignItems="center"
                                 justifyContent="center" >
-                                <TextField id="outlined-basic" label="Slider Title" variant="outlined" fullWidth sx={{ m: 2 }} onChange={e => setName(e.target.value)} />
+                                <TextField id="outlined-basic" label="Brand Name    " variant="outlined" fullWidth sx={{ m: 2 }} onChange={e => setName(e.target.value)} />
                             </Box>
 
                             <Grid sx={{ flexGrow: 1 }} container spacing={2}>
@@ -206,27 +166,29 @@ export default function SliderManagement() {
 
                         </Box>
                     </Card>
-                    <Grid sx={{ flexGrow: 1, mt: 5 }} container spacing={2}>
-                        {
-                            <Grid >
-                                <Grid container justifyContent="start" spacing={3}>
-                                    {
-                                        sliders.map((slider) => (
-                                            <SliderListsCard data={slider}/>
-                                            // <Row data={slider} />
-                                        ))
-                                    }
-                                </Grid>
+                    {
+                        loading ? 
+                        "Loading"
+                        :
+                        <Grid sx={{ flexGrow: 1, mt: 5 }} container spacing={2}>
+                        {    
+                            stores.length === 0 ?
+                            "No Stores Here"
+                            :
+                            <Grid container justifyContent="start" spacing={3}>
+                                {
+                                    
+                                    stores.map((store) => (
+                                        <StoreListCard data={store} />
+                                       
+                                    ))
+                                }
                             </Grid>
                         }
-                    </Grid>
-
-                    {/* <Row data={sliders}/> */}
-
+                        </Grid>
+                    }
 
                 </Container>
-
-
 
             </Page>
         </>

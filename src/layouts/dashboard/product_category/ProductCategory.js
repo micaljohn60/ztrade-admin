@@ -1,10 +1,11 @@
-
+import * as React from 'react';
 import { useEffect, useState } from 'react';
-import { Grid, Container, Stack, Typography, Card, Box, TextField, Button, Chip, MenuItem, CardMedia } from '@mui/material';
+import { Grid, Container, Stack, Typography, Card, Box, TextField, Button, Chip, MenuItem, CardMedia, Snackbar, Alert} from '@mui/material';
+import MuiAlert from '@mui/material/Alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { styled } from '@mui/material/styles';
 import { Icon } from '@iconify/react';
-import { addCategory, fetchCategories, addSubCategory, fetchSubCategories } from '../../../redux/actions/category_actions';
+import { addCategory, fetchCategories, addSubCategory, fetchSubCategories,cleanUp } from '../../../redux/actions/category_actions';
 import Page from '../../../components/Page';
 import Iconify from '../../../components/Iconify';
 import DeleteCategoryDialog from './component/DeleteCategoryDialog';
@@ -14,10 +15,14 @@ const Input = styled('input')({
     display: 'none',
 });
 
-export default function ProductCategory() {
+const CustomAlert = React.forwardRef((props, ref) => {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 
+export default function ProductCategory() {
+    const [open, setOpen] = useState(false);
     const [dropdownCategory, setDropDownCategory] = useState(null);
-    const [categoryName, setCategoryName] = useState(null);
+    const [categoryName, setCategoryName] = useState('');
 
     const [subCategoryName, setSubCategoryName] = useState(null);
     const [image, setImage] = useState(null);
@@ -25,6 +30,8 @@ export default function ProductCategory() {
     const categories = useSelector((state) => state.categories.categories);
     const subCategories = useSelector((state) => state.categories.subcategories);
     const loading = useSelector((state) => state.categories.loading);
+    const categoryError = useSelector((state) => state.categories.errorMessage);
+    const isError = useSelector((state) => state.categories.error);
 
 
     const handleClick = (e) => {
@@ -34,13 +41,21 @@ export default function ProductCategory() {
         dispatch(addCategory(formData));
     }
 
-    const handleSubCategory = (e) => {
+    const handleSubCategory = (e) => {        
         const data = {
             "name": subCategoryName,
             "category_id": dropdownCategory
         };
-        dispatch(addSubCategory(data))
+        dispatch(addSubCategory(data))       
+
     }
+
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false);
+    };
 
     const handleChange = (event) => {
         setDropDownCategory(event.target.value);
@@ -49,7 +64,17 @@ export default function ProductCategory() {
     useEffect(() => {
         dispatch(fetchCategories());
         dispatch(fetchSubCategories());
-    }, [])
+        if(isError){
+            setOpen(true)
+        }
+        
+        return()=>{
+            setTimeout(() => {            
+                dispatch(cleanUp())
+            }, 1000);
+            
+        }
+    }, [isError])
 
 
     return (
@@ -57,7 +82,25 @@ export default function ProductCategory() {
             <Page title="Create New Product Category">
 
                 <Container>
+                    
                     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                    {
+                        isError ?
+                            <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+                                <CustomAlert onClose={handleClose} severity="error" sx={{ width: '100%', }}>
+                                    {categoryError.errors.name} &nbsp;
+                                    {categoryError.errors.image}
+                                    {
+                                    categoryError.errors.category_id ?
+                                    "Please Select a category"
+                                    :
+                                    ""
+                                    }
+                                </CustomAlert>
+                            </Snackbar>
+                            :
+                            ""
+                    }
                         <Typography variant="h4" gutterBottom color="#108992">
                             Create New Product Category
                         </Typography>
@@ -83,7 +126,7 @@ export default function ProductCategory() {
                             <Box display="flex"
                                 alignItems="center"
                                 justifyContent="center" >
-                                <TextField id="outlined-basic" label="Add Product Category Title" variant="outlined" fullWidth sx={{ m: 2 }} onChange={(e) => setCategoryName(e.target.value)} />
+                                <TextField id="outlined-basic" label="Add Product Category Title" variant="outlined" fullWidth sx={{ m: 2 }} onChange={(e) => setCategoryName(e.target.value)} error={categoryName === ""}  helperText={categoryName === "" ? 'Empty field!' : ' '}/>
                             </Box>
 
                         </Box>
@@ -105,7 +148,7 @@ export default function ProductCategory() {
                                     </Button>
                                     <Button variant="outlined" disabled />
                                 </label>
-                            </Grid> 
+                            </Grid>
 
                         </Grid>
 
@@ -113,33 +156,33 @@ export default function ProductCategory() {
                             {
                                 image &&
                                 <Box
-                                component="div"
+                                    component="div"
                                 >
                                     <CardMedia
-                                    component="img"
-                                    sx={{ width: 151 }}
-                                    image={URL.createObjectURL(image)}
-                                    alt="category_image"
+                                        component="img"
+                                        sx={{ width: 151 }}
+                                        image={URL.createObjectURL(image)}
+                                        alt="category_image"
                                     />
                                 </Box>
                             }
                         </Grid>
 
                     </Card>
-                    <Grid container spacing={2}>                   
+                    <Grid container spacing={2}>
                         {
                             categories.length === 0 ?
-                            "No Category"
-                            :
-                            categories.map((category) => (
-                                <Grid item>
-                                    <DeleteCategoryDialog categoryName={category.name} categoryId={category.id} isCategory/>
-                                </Grid>
-                                
-                            ))
+                                "No Category"
+                                :
+                                categories.map((category) => (
+                                    <Grid item sx={{mt:2}}>
+                                        <DeleteCategoryDialog categoryName={category.name} categoryId={category.id} isCategory />
+                                    </Grid>
+
+                                ))
                         }
-                     </Grid>
-                   
+                    </Grid>
+
 
                     {
                         loading ?
@@ -188,25 +231,25 @@ export default function ProductCategory() {
                                         </Box>
 
                                     </Box>
-                                
-                                
-                                </Card>   
-                                <Grid container spacing={2}>   
-                                {
-                                subCategories.length === 0 ?
-                                "No Sub Category"
-                                :
-                                subCategories.map((category) => (
-                                    <Grid item>
-                                        <DeleteCategoryDialog categoryName={category.name} categoryId={category.id} isCategory={false}/>
-                                    </Grid>
-                                ))
-                                }
-                                </Grid>
-                            </div>   
 
-                            
-                            
+
+                                </Card>
+                                <Grid container spacing={2}>
+                                    {
+                                        subCategories.length === 0 ?
+                                        <Alert severity="warning" sx={{mt:3}}>No Sub Category Here! Create New One</Alert>
+                                            :
+                                            subCategories.map((category) => (
+                                                <Grid item sx={{mt:2}}>
+                                                    <DeleteCategoryDialog categoryName={category.name} categoryId={category.id} isCategory={false} />
+                                                </Grid>
+                                            ))
+                                    }
+                                </Grid>
+                            </div>
+
+
+
                     }
 
                 </Container>

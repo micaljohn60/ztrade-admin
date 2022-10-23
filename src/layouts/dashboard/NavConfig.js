@@ -27,6 +27,11 @@ const navConfig = [
     icon: getIcon('dashicons:image-flip-horizontal'),
   },
   {
+    title: 'Brands',
+    path: '/dashboard/brand',
+    icon: getIcon('tabler:brand-appgallery'),
+  },
+  {
     title: 'Product Category',
     path: '/dashboard/productcategory',
     icon: getIcon('eos-icons:products-outlined'),
