@@ -1,8 +1,10 @@
-import { useState, useEffect,useCallback } from 'react';
+import * as React from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 // material
-import { Container, Stack, Typography, Card, CardMedia, Box, MenuItem, TextField, Button, Grid, Paper, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel } from '@mui/material';
+import { Container, Stack, Typography, Card, CardMedia, Box, MenuItem, TextField, Button, Grid, Paper, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, Snackbar, Checkbox } from '@mui/material';
 // components
+import MuiAlert from '@mui/material/Alert';
 import { Icon } from '@iconify/react';
 import { styled } from '@mui/material/styles';
 import { v4 as uuidv4 } from 'uuid';
@@ -12,7 +14,7 @@ import { fetchStores } from '../../redux/actions/store_actions';
 import { fetchCategories } from '../../redux/actions/category_actions';
 import Dropzone from './components/DropZone';
 
-import { addProduct } from '../../redux/actions/product_actions';
+import { addProduct, productCleanUp } from '../../redux/actions/product_actions';
 
 
 // ----------------------------------------------------------------------
@@ -21,15 +23,17 @@ import { addProduct } from '../../redux/actions/product_actions';
 const Input = styled('input')({
   display: 'none',
 });
-
+const CustomAlert = React.forwardRef((props, ref) => {
+  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+});
 export default function CreateProduct() {
-
+  const [open, setOpen] = useState(false);
   const [job_category, setJobCategory] = useState('sales and marketing');
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [categoryId, setCategoryId] = useState('');
-  const [storeId,setStoreId] = useState('');
+  const [storeId, setStoreId] = useState('');
   const [salary, setSalary] = useState('0');
   const [images, setImages] = useState([]);
   const [skillInputFields, setSkillInputFields] = useState([{ id: uuidv4(), skillName: '' }])
@@ -39,7 +43,13 @@ export default function CreateProduct() {
   const categoryLoading = useSelector((state) => state.categories.loading);
   const stores = useSelector((state) => state.store.stores);
   const storeLoading = useSelector((state) => state.store.loading);
-  const [radioValue, setRadioValue] = useState("none")
+  const isError = useSelector((state) => state.product.error);
+  const productError = useSelector((state) => state.product.errorMessage);
+  const [radioValue, setRadioValue] = useState("none");
+  const [newArrival,setNewArrival] = useState(false);
+  const [mostPopular,setMostPopular] = useState(false);
+  const [newArrivalString,setNewArrivalString] = useState('0');
+  const [mostPopularString,setMostPopularString] = useState('0');
 
   const onDrop = useCallback((acceptedFiles) => {
     acceptedFiles.map((file) => {
@@ -54,6 +64,28 @@ export default function CreateProduct() {
       return file;
     });
   }, [])
+
+  const _handleNewArrival = ()=>{
+    if(!newArrival){
+      setNewArrival(true)
+      setNewArrivalString('1')
+    }
+    else{
+      setNewArrival(false)
+      setNewArrivalString('0')
+    }
+  }
+
+  const _handleMostPopular = ()=>{
+    if(!mostPopular){
+      setMostPopular(true)
+      setMostPopularString('1')
+    }
+    else{
+      setMostPopular(false)
+      setMostPopularString('0')
+    }
+  }
 
   const handleChangeInput = (id, event) => {
     const newInputField = skillInputFields.map(i => {
@@ -90,22 +122,24 @@ export default function CreateProduct() {
     for (let i = 0; i < images.length; i += 1) {
       formData.append(`thumbnails${i}`, images[i]);
     }
-    formData.append('price',price);
-    formData.append('name',name);
-    formData.append('item_description',description);
-    formData.append('category_id',categoryId);
-    formData.append('percentage_id',1);
-    formData.append('store_id',radioValue === 'none' ? 0 : storeId);
+    formData.append('price', price);
+    formData.append('name', name);
+    formData.append('item_description', description);
+    formData.append('category_id', categoryId);
+    formData.append('percentage_id', 1);
+    formData.append('store_id', radioValue === 'none' ? 0 : storeId);
     formData.append('image_list', images.length)
-    
+    formData.append('new_arrival',newArrivalString);
+    formData.append('most_popular',mostPopularString);
+
     const data = {
-      "name" : name,
-      "price" : price,
-      "item_description" : description,
-      "thumbnails" : images,
-      "category_id" : categoryId,
-      "percentage_id" : 1,
-      "store_id" : storeId
+      "name": name,
+      "price": price,
+      "item_description": description,
+      "thumbnails": images,
+      "category_id": categoryId,
+      "percentage_id": 1,
+      "store_id": storeId
     }
     dispatch(addProduct(formData))
     console.log(formData.get('thumbnails0'))
@@ -124,15 +158,55 @@ export default function CreateProduct() {
     setRadioValue(e.target.value)
   }
 
+  const handleClose = (event, reason) => {
+    if (reason === 'clickaway') {
+      return;
+    }
+    setOpen(false);
+  };
+
   useEffect(() => {
     dispatch(fetchCategories())
     dispatch(fetchStores())
-  }, [])
+    if (isError) {
+      setOpen(true)
+    }
+
+    return () => {
+      setTimeout(() => {
+        dispatch(productCleanUp())
+      }, 1000);
+    }
+
+  }, [isError])
 
   return (
     <Page title="Create New Product">
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+
+          {
+            isError ?
+              <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+                <CustomAlert onClose={handleClose} severity="error" sx={{ width: '100%', }}>
+
+                  {/* {productError.errors.name ?? productError.errors.name} &nbsp;
+                  {productError.errors.item_description}
+                  {productError.errors.image}
+                  {productError.errors.price}
+                  {
+                    productError.errors.category_id ?
+                      "Please Select a category"
+                      :
+                      ""
+                  } */}
+                </CustomAlert>
+              </Snackbar>
+              :
+              ""
+          }
+
+
           <Typography variant="h4" gutterBottom color="#108992">
             Create New Product
           </Typography>
@@ -205,6 +279,19 @@ export default function CreateProduct() {
               </TextField>
             </Box>
 
+            <Box>
+              <Checkbox
+                checked={newArrival}
+                onChange={_handleNewArrival}
+                inputProps={{ 'aria-label': 'controlled' }}
+              />
+              <Checkbox
+                checked={mostPopular}
+                onChange={_handleMostPopular}
+                inputProps={{ 'aria-label': 'controlled' }}
+              />
+            </Box>
+
             <Box display="flex"
               alignItems="center"
               justifyContent="center">
@@ -238,9 +325,12 @@ export default function CreateProduct() {
                     {[0,].map((value) => (
                       <Grid key={value} item>
                         <Card
+                          className="border"
                           sx={{
                             height: 240,
-                            width: 200,
+                            width: 850,
+                            border: '2px',
+                            borderStyle: 'dotted',
                             backgroundColor: (theme) =>
                               theme.palette.mode === 'dark' ? '#1A2027' : '#f5f5f5',
                           }}
@@ -255,34 +345,43 @@ export default function CreateProduct() {
 
                           >
 
-                            <Grid item sx={{ m: "50%" }}>
-                              <label htmlFor="contained-button-file">
-                                <Input accept="image/*" id="contained-button-file" multiple type="file" onChange={(e) => setImages(e.target.files)} />
-                                <Button variant="contained" component="span" >
-                                  <Icon icon="carbon:add-filled" />
-                                </Button>
+                            <Grid item >
+                              <Box display="flex" justifyContent="center" alignItems="center" sx={{ mt: 2 }}>
+                                <label htmlFor="contained-button-file" >
+                                  <Input accept="image/*" id="contained-button-file" multiple type="file" onChange={(e) => setImages(e.target.files)} />
+                                  <Button variant="contained" component="span" >
+                                    <Icon icon="carbon:add-filled" />
+                                  </Button>
 
 
-                                <Button variant="outlined" disabled />
-                              </label>
-                              {
-                                images.length === 0 ?
-                                "No Images"
-                                :
-                                
-                                  Array.from(images).map((data) => (
-                                 
-                                    <CardMedia
-                                      component="img"
-                                      sx={{ width: 151 }}
-                                      image={URL.createObjectURL(data)}
-                                      alt="category_image"
-                                    />
-                                    
-                                  ))
-                                
-                                
-                              }
+
+                                </label>
+                              </Box>
+
+                              <Box display="flex" justifyContent="center" alignItems="center">
+                                {
+                                  images.length === 0 ?
+                                    <Typography variant="subtitle1" display="block" gutterBottom sx={{ mt: 3 }}>
+                                      No Images, Use Shift to select Multiple Images
+                                    </Typography>
+                                    :
+
+                                    Array.from(images).map((data) => (
+
+
+                                      <CardMedia
+                                        component="img"
+                                        sx={{ width: 151, m: 1 }}
+                                        image={URL.createObjectURL(data)}
+                                        alt="category_image"
+                                      />
+
+
+                                    ))
+
+                                }
+                              </Box>
+
                             </Grid>
 
 
@@ -295,10 +394,12 @@ export default function CreateProduct() {
                 </Grid>
               </Grid>
 
+
             </Box>
-            <Button variant="contained" component="span" onClick={fileHandler}>
+
+            {/* <Button variant="contained" component="span" onClick={fileHandler}>
               Show
-            </Button>
+            </Button> */}
           </Box>
 
         </Card>

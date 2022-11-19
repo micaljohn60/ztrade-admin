@@ -1,28 +1,35 @@
 import { ActionTypes } from "../actions/types"
 
-const sliderInitialState ={
+const productInitialState ={
     loading : true,
-    sliders: [],
+    products: [],
+    product:[],
     error : false,
     errorMessage : []
 }
 
-export const SliderReducer = (state = sliderInitialState,{type,payload}={})=>{
+export const ProductReducer = (state = productInitialState,{type,payload}={})=>{
     switch(type){
-        case ActionTypes.FETCH_SLIDERS:
+        case ActionTypes.FETCH_PRODUCTS:
             return {
                 ... state,
                 loading : false,
-                sliders  : payload
+                products  : payload
             }
-        case ActionTypes.ERROR_MESSAGE:
+        case ActionTypes.FETCH_SINGLE_PRODUCT:
+            return{
+                ... state,
+                loading : false,
+                product  : payload
+            }
+        case ActionTypes.PRODUCT_MESSAGE:
             return{
                 ... state,
                 loading : false,
                 error : true,
                 errorMessage : payload
             }
-            case ActionTypes.SLIDER_CLEAN_UP:
+            case ActionTypes.PRODUCT_CLEAN_UP:
                 return {
                     ... state,
                     loading : false,

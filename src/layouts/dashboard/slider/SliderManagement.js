@@ -1,4 +1,6 @@
-import { Grid, Container, Stack, Typography, Card, Box, TextField, Button, MenuItem, CardMedia } from '@mui/material';
+import * as React from 'react';
+import { Grid, Container, Stack, Typography, Card, Box, TextField, Button, MenuItem, CardMedia,Snackbar,Alert } from '@mui/material';
+import MuiAlert from '@mui/material/Alert';
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import Radio from '@mui/material/Radio';
@@ -11,7 +13,7 @@ import { Icon } from '@iconify/react';
 import Page from '../../../components/Page';
 import Iconify from '../../../components/Iconify';
 import Row from './components/Row'
-import { addSlider, fetchSlider } from '../../../redux/actions/slider_actions'
+import { addSlider, fetchSlider, sliderCleanUp } from '../../../redux/actions/slider_actions'
 import { fetchStores } from '../../../redux/actions/store_actions';
 import SliderListsCard from './components/SliderListsCard';
 
@@ -20,6 +22,10 @@ import SliderListsCard from './components/SliderListsCard';
 
 const Input = styled('input')({
     display: 'none',
+});
+
+const CustomAlert = React.forwardRef((props, ref) => {
+    return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
 
 const jobCategories = [
@@ -44,14 +50,17 @@ const jobCategories = [
 export default function SliderManagement() {
 
     const [brandId, setBrandId] = useState('sales and marketing');
+    const [open, setOpen] = useState(false);
     const [radioValue, setRadioValue] = useState("homescreen")
-    const [name, setName] = useState(null)
+    const [name, setName] = useState('')
     const [image, setImage] = useState(null)
 
     const dispatch = useDispatch()
 
     const sliders = useSelector((state) => state.slider.sliders);
     const stores = useSelector((state) => state.store.stores);
+    const sliderError = useSelector((state) => state.slider.errorMessage);
+    const isError = useSelector((state) => state.slider.error);
 
     const handleClick = (e) => {
         const formData = new FormData();
@@ -67,6 +76,13 @@ export default function SliderManagement() {
         }
     }
 
+    const handleClose = (event, reason) => {
+        if (reason === 'clickaway') {
+            return;
+        }
+        setOpen(false);
+    };
+
 
     const handleRadioChange = (e) => {
         setRadioValue(e.target.value)
@@ -79,13 +95,42 @@ export default function SliderManagement() {
     useEffect(() => {
         dispatch(fetchSlider())
         dispatch(fetchStores())
-    }, [])
+
+        if(isError){
+            setOpen(true)
+        }
+
+        return()=>{
+            setTimeout(() => {            
+                dispatch(sliderCleanUp())
+            }, 1000);
+            
+        }
+    }, [isError])
 
     return (
         <>
             <Page title="Create New Image Slider">
                 <Container>
                     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+
+                    {
+                        isError ?
+                            <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+                                <CustomAlert onClose={handleClose} severity="error" sx={{ width: '100%', }}>
+                                    {sliderError.errors.name && ''} &nbsp;
+                                    {sliderError.errors.image}
+                                    {
+                                    sliderError.errors.slider_id ?
+                                    "Please Select a Store"
+                                    :
+                                    ""
+                                    }
+                                </CustomAlert>
+                            </Snackbar>
+                            :
+                            ""
+                    }
                         <Typography variant="h4" gutterBottom color="#108992">
                             Create New Image Slider
                         </Typography>
@@ -100,7 +145,7 @@ export default function SliderManagement() {
                     </Stack>
 
                     <Card >
-                        <FormControl >
+                        <FormControl sx={{ml:2,mt:2}}>
                             <FormLabel id="demo-row-radio-buttons-group-label">Select one to add Slider</FormLabel>
                             <RadioGroup
                                 row
@@ -152,8 +197,10 @@ export default function SliderManagement() {
                                         <Grid item>
                                             <Card
                                                 sx={{
-                                                    height: 200,
-                                                    width: 200,
+                                                    height: 240,
+                                                    width: 500,
+                                                    border: '2px',
+                                                    borderStyle: 'dotted',
                                                     backgroundColor: (theme) =>
                                                         theme.palette.mode === 'dark' ? '#1A2027' : '#f5f5f5',
                                                 }}
@@ -165,16 +212,18 @@ export default function SliderManagement() {
                                                     direction="row"
                                                     justifyContent="center"
                                                     alignItems="center"
-
+                                                    sx={{mt:2}}
                                                 >
 
                                                     <label htmlFor="contained-button-file" className="mb-2">
                                                         <Input accept="image/*" id="contained-button-file" multiple type="file" onChange={e => setImage(e.target.files[0])} />
-                                                        <Button variant="contained" component="span" sx={{ mb: "2" }}>
+                                                        <Button variant="contained" component="span" >
                                                             <Icon icon="carbon:add-filled" />
                                                         </Button>
                                                     </label>
-                                                    <Grid container justifyContent="center" alignItems="center">
+
+                                                    
+                                                    <Grid container justifyContent="center" alignItems="center" sx={{mt:2}}>
                                                         {
                                                             image &&
                                                             <Box
@@ -182,12 +231,12 @@ export default function SliderManagement() {
                                                             >
                                                                 <CardMedia
                                                                     component="img"
-                                                                    sx={{ width: 300 }}
+                                                                    sx={{ width: 480 }}
                                                                     image={URL.createObjectURL(image)}
                                                                     alt="slider image"
                                                                 />
                                                             </Box>
-                                                        }
+                                                        }   
                                                     </Grid>
 
                                                 </Grid>
@@ -206,13 +255,18 @@ export default function SliderManagement() {
 
                         </Box>
                     </Card>
-                    <Grid sx={{ flexGrow: 1, mt: 5 }} container spacing={2}>
+
+                    {
+                        sliders.length === 0 ?
+                        <Alert severity="warning" sx={{mt:3}}>No Sliders Here! Create New One</Alert>
+                        :
+                        <Grid sx={{ flexGrow: 1, mt: 5 }} container spacing={1}>
                         {
                             <Grid >
-                                <Grid container justifyContent="start" spacing={3}>
+                                <Grid container justifyContent="start" spacing={2}>
                                     {
                                         sliders.map((slider) => (
-                                            <SliderListsCard data={slider}/>
+                                            <SliderListsCard data={slider} stores={stores}/>
                                             // <Row data={slider} />
                                         ))
                                     }
@@ -220,6 +274,10 @@ export default function SliderManagement() {
                             </Grid>
                         }
                     </Grid>
+                    }
+                    
+                   
+                    
 
                     {/* <Row data={sliders}/> */}
 

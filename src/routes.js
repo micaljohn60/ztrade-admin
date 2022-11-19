@@ -18,6 +18,9 @@ import ProductLists from './pages/products/ProductLists';
 import RolesAndPermissions from './layouts/dashboard/rolesAndPermissions/RolesAndPermissions';
 import AddNewUser from './layouts/dashboard/user/AddNewUser';
 import Store from './pages/store/Store';
+import EditProduct from './pages/products/ProductEdit';
+import AboutUs from './pages/about_us/AboutUs';
+import PrivacyPolicy from './pages/privacy_policy/PrivacyPolicy';
 
 // ----------------------------------------------------------------------
 
@@ -28,8 +31,11 @@ export default function Router() {
       element: <DashboardLayout />,
       children: [
         { path: 'app', element: <DashboardApp /> },
-        { path: 'user', element: <User /> },
+        { path: 'user', element: <User /> },       
+        { path: 'aboutus', element: <AboutUs /> },
+        { path: 'privacy_policy', element: <PrivacyPolicy /> },
         { path: 'products', element: <ProductLists/>},
+        { path: 'products/:productId', element: <EditProduct/>},
         { path: 'brand', element: <Store/>},
         { path: 'rolesandpermisions', element: <RolesAndPermissions/>},
         { path: 'addnewusers', element: <AddNewUser/>},

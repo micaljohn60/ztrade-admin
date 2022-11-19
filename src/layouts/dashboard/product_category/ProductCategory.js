@@ -5,7 +5,7 @@ import MuiAlert from '@mui/material/Alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { styled } from '@mui/material/styles';
 import { Icon } from '@iconify/react';
-import { addCategory, fetchCategories, addSubCategory, fetchSubCategories,cleanUp } from '../../../redux/actions/category_actions';
+import { addCategory, fetchCategories, addSubCategory, fetchSubCategories,cleanUp, updateCategory } from '../../../redux/actions/category_actions';
 import Page from '../../../components/Page';
 import Iconify from '../../../components/Iconify';
 import DeleteCategoryDialog from './component/DeleteCategoryDialog';
@@ -60,6 +60,8 @@ export default function ProductCategory() {
     const handleChange = (event) => {
         setDropDownCategory(event.target.value);
     };
+
+   
 
     useEffect(() => {
         dispatch(fetchCategories());
@@ -142,19 +144,19 @@ export default function ProductCategory() {
 
                             <Grid item sx={{ m: "3%" }}>
                                 <label htmlFor="contained-button-file">
-                                    <Input accept="image/*" id="contained-button-file" multiple type="file" onChange={(e) => setImage(e.target.files[0])} />
+                                    <Input accept="image/*" id="contained-button-file" type="file" onChange={(e) => setImage(e.target.files[0])} />
                                     <Button variant="contained" component="span">
                                         <Icon icon="carbon:add-filled" />
                                     </Button>
-                                    <Button variant="outlined" disabled />
+                                    {/* <Button variant="outlined" disabled /> */}
                                 </label>
                             </Grid>
 
                         </Grid>
-
+                        
                         <Grid container justifyContent="center" alignItems="center">
                             {
-                                image &&
+                                image && 
                                 <Box
                                     component="div"
                                 >
@@ -172,7 +174,7 @@ export default function ProductCategory() {
                     <Grid container spacing={2}>
                         {
                             categories.length === 0 ?
-                                "No Category"
+                                <Alert severity="warning" sx={{mt:3}}>No Category Here! Create New One</Alert>
                                 :
                                 categories.map((category) => (
                                     <Grid item sx={{mt:2}}>
@@ -241,7 +243,7 @@ export default function ProductCategory() {
                                             :
                                             subCategories.map((category) => (
                                                 <Grid item sx={{mt:2}}>
-                                                    <DeleteCategoryDialog categoryName={category.name} categoryId={category.id} isCategory={false} />
+                                                    <DeleteCategoryDialog categoryName={category.name} categoryId={category.id} isCategory={false} categories={categories}/>
                                                 </Grid>
                                             ))
                                     }

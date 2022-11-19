@@ -53,6 +53,31 @@ export const addCategory = (data) => async (dispatch) =>{
   
 }
 
+export const updateCategory = (data,id) => async (dispatch) =>{
+
+  
+  const response = await ztrade_api.post(`api/category/update/${id}`,data,tokenConfigFile()).then(
+    res=>{
+   
+      if(res.status === 201){
+
+        dispatch({type:ActionTypes.SUCCESS_MESSAGE,payload: "Successfully Created"})
+        process.env.REACT_APP_STATUS === "development"  ? 
+        window.location.href = "http://localhost:3000/dashboard/productcategory" 
+        : 
+        window.location.href = "https://talentandjobs-testing.web.app/dashboard/productcategory"
+        
+      }
+      else{
+        dispatch({type:ActionTypes.ERROR_MESSAGE,payload: res.error})
+      }
+    }
+  ).catch(err=>{
+    dispatch({type:ActionTypes.ERROR_MESSAGE,payload: err.response.data})
+  }) 
+
+}
+
 export const cleanUp = () => (dispatch) =>{
   dispatch({type:ActionTypes.CATEGORY_CLEAN_UP,payload: ""})
 }
@@ -98,4 +123,46 @@ export const deleteSubCategory = (id) => async (dispatch) =>{
       }
     }
   )
+}
+
+export const updateSubCategory = (data,id) => async (dispatch) =>{
+  
+  const response = await ztrade_api.post(`api/subcategory/update/${id}`,data,tokenConfigFile()).then(
+    res=>{
+   
+      if(res.status === 201){
+
+        dispatch({type:ActionTypes.SUCCESS_MESSAGE,payload: "Successfully Created"})
+        process.env.REACT_APP_STATUS === "development"  ? 
+        window.location.href = "http://localhost:3000/dashboard/productcategory" 
+        : 
+        window.location.href = "https://talentandjobs-testing.web.app/dashboard/productcategory"
+        
+      }
+      if (res.status === 404){
+        console.log("")
+      }
+      else{
+        dispatch({type:ActionTypes.ERROR_MESSAGE,payload: res.error})
+      }
+    }
+  ).catch(err=>{
+    dispatch({type:ActionTypes.ERROR_MESSAGE,payload: err.response.data})
+  }) 
+
+}
+
+export const tokenConfigFile =() =>{
+ 
+  // const userToken = JSON.parse(token)
+  const config = {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    };
+  // if(userToken) {
+  //     config.headers['Authorization'] = `Bearer ${userToken}`;
+  // }
+
+  return config;
 }

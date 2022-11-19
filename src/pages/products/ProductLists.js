@@ -1,6 +1,6 @@
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 // material
 import {
@@ -20,6 +20,9 @@ import {
 } from '@mui/material';
 // components
 import { Icon } from '@iconify/react';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchProducts } from '../../redux/actions/product_actions';
+
 import Page from '../../components/Page';
 import Label from '../../components/Label';
 import Scrollbar from '../../components/Scrollbar';
@@ -30,6 +33,8 @@ import { UserListHead, UserListToolbar, UserMoreMenu } from '../../sections/@das
 // mock
 import USERLIST from '../../_mock/user';
 import PRODUCTS from '../../_mock/products';
+import ProductDeleteDialog from './components/ProductDeleteDialog';
+
 
 // ----------------------------------------------------------------------
 
@@ -85,6 +90,8 @@ export default function ProductLists() {
 
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
+  const products = useSelector((state) => state.product.products);
+
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -130,9 +137,17 @@ export default function ProductLists() {
 
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - USERLIST.length) : 0;
 
-  const filteredUsers = applySortFilter(PRODUCTS, getComparator(order, orderBy), filterName);
+  const filteredUsers = applySortFilter(products, getComparator(order, orderBy), filterName);
 
   const isUserNotFound = filteredUsers.length === 0;
+
+
+
+  const dispatch = useDispatch();
+
+ useEffect(()=>{
+  dispatch(fetchProducts())
+ },[])
 
   return (
     <Page title="Product Lists">
@@ -156,14 +171,14 @@ export default function ProductLists() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={USERLIST.length}
-                  numSelected={selected.length}
-                  onRequestSort={handleRequestSort}
-                  onSelectAllClick={handleSelectAllClick}
+                  rowCount={products.length}
+                  // numSelected={selected.length}
+                  // onRequestSort={handleRequestSort}
+                  // onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, price, company, avatarUrl, isVerified } = row;
+                    const { id, name, role, price, company, avatarUrl, isVerified,item_id,category } = row;
                     const isItemSelected = selected.indexOf(name) !== -1;
 
                     return (
@@ -180,15 +195,16 @@ export default function ProductLists() {
                           <Stack direction="row" alignItems="center" spacing={2}>
                             
                             <Typography variant="subtitle2" noWrap>
-                              {id}
+                              {item_id }
                             </Typography>
                           </Stack>
                         </TableCell>
                         <TableCell align="left">{name}</TableCell>
-                        <TableCell align="left">-</TableCell>
+                        <TableCell align="left">{category.name}</TableCell>
                         <TableCell align="left">{price} MMK</TableCell>
                         <TableCell align="left">
-                          <Icon icon="fluent:delete-48-regular" width={28} height={28}/>
+                          <ProductDeleteDialog productName={name} productId={id}/>
+                          {/* <Icon icon="fluent:delete-48-regular" width={28} height={28}/> */}
                           <Icon icon="ant-design:edit-twotone" width={28} height={28} />
                         </TableCell>
 

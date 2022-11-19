@@ -11,6 +11,7 @@ const navConfig = [
     path: '/dashboard/app',
     icon: getIcon('eva:pie-chart-2-fill'),
   },
+  
   {
     title: 'user',
     path: '/dashboard/user',
@@ -45,6 +46,16 @@ const navConfig = [
     title: 'Roles and Permissions',
     path: '/dashboard/rolesandpermisions',
     icon: getIcon('icon-park-outline:permissions'),
+  },
+  {
+    title: 'about us',
+    path: '/dashboard/aboutus',
+    icon: getIcon('clarity:help-info-line'),
+  },
+  {
+    title: 'privacy policy',
+    path: '/dashboard/privacy_policy',
+    icon: getIcon('dashicons:privacy'),
   },
   {
     title: 'Add New User',
