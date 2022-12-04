@@ -21,8 +21,8 @@ const Input = styled('input')({
 
 export default function SliderEditDialog({ sliderName, sliderId, stores, storeId}) {
   const [open, setOpen] = useState(false);
-  const [name, setName] = useState(null);
-  const [newName, setNewName] = useState(null);
+  const [name, setName] = useState('');
+  const [newName, setNewName] = useState('');
   const [id, setId] = useState(null);
   const [image, setImage] = useState(null)
   const [brandId, setBrandId] = useState('sales and marketing');

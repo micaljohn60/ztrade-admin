@@ -11,7 +11,7 @@ import BannerEdit from './BannerEdit';
 
 
 
-export default function BannerLists({banner,bannerId}) {
+export default function BannerLists({banner,bannerId,state}) {
     const {name,image} = banner;
     return (
         <Card sx={{ width: 250, border: 1, borderColor: "#000", m: 1, ml:3 }} >
@@ -33,7 +33,7 @@ export default function BannerLists({banner,bannerId}) {
                     justifyContent='end'
                     alignItems='center'
                 >
-                    <BannerDelete bannerName={name} bannerId={bannerId}/>
+                    <BannerDelete bannerName={name} bannerId={bannerId} state={state}/>
                     <BannerEdit bannerName={name} bannerId={bannerId}/>
                     {/* <SliderDeleteDialog sliderName={name} sliderId={data.id}/>
                     <SliderEditDialog sliderName={name} sliderId={data.id} stores={stores} storeId={store_id}/> */}

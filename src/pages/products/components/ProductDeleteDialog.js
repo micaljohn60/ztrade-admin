@@ -49,6 +49,11 @@ export default function ProductDeleteDialog({productName,productId,}) {
             <DialogContent>
             <DialogContentText id="alert-dialog-description">
                 If you delete this {name}, products that are connected with Store will also be removed.
+
+                <div>
+                  Delete function is currently under development, this message will disapper as soon as 
+                  it is ready to use.
+                </div>
             </DialogContentText>
             </DialogContent>
             <DialogActions>

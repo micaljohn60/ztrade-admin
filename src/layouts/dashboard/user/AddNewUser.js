@@ -159,6 +159,13 @@ export default function AddNewUser() {
                             <TextField id="outlined-basic" onChange={e => setUserPassword(e.target.value)} label="User Password" variant="outlined" style={{ width: 800 }} sx={{ m: 2 }} error={password === ""} helperText={password === "" ? 'Empty field!' : ' '} />
 
                         </Box>
+                        <Box display="flex"
+
+                            alignItems="center"
+                            justifyContent="center" >
+                            <TextField id="outlined-basic" onChange={e => setUserPassword(e.target.value)} label="Re-Type Password" variant="outlined" style={{ width: 800 }} sx={{ m: 2 }} error={password === ""} helperText={password === "" ? 'Empty field!' : ' '} />
+
+                        </Box>
 
                         <Box display="flex"
                             alignItems="center"

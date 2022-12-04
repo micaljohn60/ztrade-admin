@@ -13,7 +13,7 @@ export const addStore = (data) => async (dispatch) =>{
         process.env.REACT_APP_STATUS === "development"  ? 
         window.location.href = "http://localhost:3000/dashboard/brand" 
         : 
-        window.location.href = "https://talentandjobs-testing.web.app/dashboard/brand"
+        window.location.href = `${process.env.REACT_APP_WEB_ADMIN_PRODUCTION_PORT}dashboard/brand`
         
       }
     }
@@ -35,7 +35,7 @@ export const updateStore = (data,id) => async (dispatch) =>{
         process.env.REACT_APP_STATUS === "development"  ? 
         window.location.href = "http://localhost:3000/dashboard/brand" 
         : 
-        window.location.href = "https://talentandjobs-testing.web.app/dashboard/slider"
+        window.location.href = `${process.env.REACT_APP_WEB_ADMIN_PRODUCTION_PORT}dashboard/brand`
         
       }
       else {
@@ -65,7 +65,7 @@ export const deleteStore = (id) => async (dispatch) =>{
           process.env.REACT_APP_STATUS === "development"  ? 
           window.location.href = "http://localhost:3000/dashboard/brand" 
           : 
-          window.location.href = "https://talentandjobs-testing.web.app/dashboard/brand"
+          window.location.href = `${process.env.REACT_APP_WEB_ADMIN_PRODUCTION_PORT}dashboard/brand`
           
         }
       }

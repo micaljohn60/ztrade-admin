@@ -1,12 +1,13 @@
 import { filter } from 'lodash';
 import { sentenceCase } from 'change-case';
 import { useEffect, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link, Link as RouterLink } from 'react-router-dom';
 // material
 import {
   Card,
   Table,
   Stack,
+  Box,
   Avatar,
   Button,
   Checkbox,
@@ -21,7 +22,7 @@ import {
 // components
 import { Icon } from '@iconify/react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchProducts } from '../../redux/actions/product_actions';
+import { fetchProducts, singleProductCleanUp } from '../../redux/actions/product_actions';
 
 import Page from '../../components/Page';
 import Label from '../../components/Label';
@@ -43,7 +44,7 @@ const TABLE_HEAD = [
   { id: 'productName', label: 'Product Name', alignRight: false },
   { id: 'productCategory', label: 'Product Category', alignRight: false },
   { id: 'price', label: 'Price', alignRight: false },
-  { id: 'action', label: 'Action'},
+  { id: 'action', label: 'Action' },
 ];
 
 // ----------------------------------------------------------------------
@@ -145,9 +146,16 @@ export default function ProductLists() {
 
   const dispatch = useDispatch();
 
- useEffect(()=>{
-  dispatch(fetchProducts())
- },[])
+  useEffect(() => {
+    dispatch(fetchProducts())
+
+    return ()=>{
+      
+        dispatch(singleProductCleanUp())
+    
+      
+     }
+  }, [])
 
   return (
     <Page title="Product Lists">
@@ -156,7 +164,7 @@ export default function ProductLists() {
           <Typography variant="h4" gutterBottom>
             Products
           </Typography>
-          <Button variant="contained" component={RouterLink} to="#" startIcon={<Iconify icon="eva:plus-fill" />}>
+          <Button variant="contained" component={RouterLink} to="/dashboard/createproduct" startIcon={<Iconify icon="eva:plus-fill" />}>
             Add New Products
           </Button>
         </Stack>
@@ -172,13 +180,13 @@ export default function ProductLists() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   rowCount={products.length}
-                  // numSelected={selected.length}
-                  // onRequestSort={handleRequestSort}
-                  // onSelectAllClick={handleSelectAllClick}
+                // numSelected={selected.length}
+                // onRequestSort={handleRequestSort}
+                // onSelectAllClick={handleSelectAllClick}
                 />
                 <TableBody>
                   {filteredUsers.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage).map((row) => {
-                    const { id, name, role, price, company, avatarUrl, isVerified,item_id,category } = row;
+                    const { id, name, role, price, company, avatarUrl, isVerified, item_id, category } = row;
                     const isItemSelected = selected.indexOf(name) !== -1;
 
                     return (
@@ -186,16 +194,16 @@ export default function ProductLists() {
                         hover
                         key={id}
                         tabIndex={-1}
-                       
+
                       >
-                        <TableCell padding="checkbox"/>
-                          
-                       
+                        <TableCell padding="checkbox" />
+
+
                         <TableCell component="th" scope="row" padding="none">
                           <Stack direction="row" alignItems="center" spacing={2}>
-                            
+
                             <Typography variant="subtitle2" noWrap>
-                              {item_id }
+                              {item_id}
                             </Typography>
                           </Stack>
                         </TableCell>
@@ -203,9 +211,13 @@ export default function ProductLists() {
                         <TableCell align="left">{category.name}</TableCell>
                         <TableCell align="left">{price} MMK</TableCell>
                         <TableCell align="left">
-                          <ProductDeleteDialog productName={name} productId={id}/>
-                          {/* <Icon icon="fluent:delete-48-regular" width={28} height={28}/> */}
+                          <Box display="flex" justifyContent="left" alignItems="center">
+                            <ProductDeleteDialog productName={name} productId={id} />
+
+                          <Link to={`/dashboard/products/${id}`}>
                           <Icon icon="ant-design:edit-twotone" width={28} height={28} />
+                          </Link>
+                          </Box>
                         </TableCell>
 
                         {/* <TableCell align="right">

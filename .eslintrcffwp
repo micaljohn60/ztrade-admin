@@ -71,8 +71,8 @@
     "prefer-destructuring": [
       1,
       {
-        "object": false,
-        "array": false
+        "object": true,
+        "array": true
       }
     ]
   }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useDispatch } from 'react-redux';
 import Dialog from '@mui/material/Dialog';
+import { Box } from '@mui/material';
 import DialogActions from '@mui/material/DialogActions';
 import DialogContent from '@mui/material/DialogContent';
 import Button from '@mui/material/Button';
@@ -9,18 +10,17 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogTitle from '@mui/material/DialogTitle';
 import { Icon } from '@iconify/react';
 
-import { deleteBanner } from '../../../../redux/actions/banner_actions';
+import { deleteProductImage } from '../../../redux/actions/product_actions';
 
-
-export default function BannerDelete({bannerName,bannerId,state}) {
+export default function DeleteProductImage({imageId,state,productImage,imageList,deleteIdState,ids}) {
   const [open, setOpen] = useState(false);
   const [name,setName] =  useState(null);
   const [id,setId] =  useState(null);
   const dispatch = useDispatch();
 
   const handleClickOpen = () => {
-    setId(bannerId)
-    setName(bannerName);
+    setId(imageId)
+    
     setOpen(true);
   };
 
@@ -29,39 +29,48 @@ export default function BannerDelete({bannerName,bannerId,state}) {
   };
 
   const handleDelete = () =>{
-    state(true)
-      dispatch(deleteBanner(id))
+      dispatch(deleteProductImage(id))
+  }
+
+  const handleStateChange = ()=>{
+    console.log("Hey")
+    
+    deleteIdState([...ids,imageId])
+    console.log(ids);
+    state([...imageList,productImage])  
+    console.log(imageList)  
   }
 
   return (
-    <div>
-        <IconButton color="error" aria-label="upload picture" component="label" onClick={handleClickOpen}>            
+    <Box position="absolute" top="5px">
+        <IconButton color="error" aria-label="upload picture" component="label" onClick={handleStateChange}>            
             <Icon icon="icon-park-solid:delete-five" sx={{color: "#fff"}}/>
         </IconButton>
 
-        <Dialog
+        {/* <Dialog
             open={open}
             onClose={handleClose}
             aria-labelledby="alert-dialog-title"
             aria-describedby="alert-dialog-description"
         >
             <DialogTitle id="alert-dialog-title">
-            {"Are you sure you wnat to delete " } {name}
+            {"Are you sure you wnat to delete"}
             </DialogTitle>
             <DialogContent>
             <DialogContentText id="alert-dialog-description">
-                You Cannot Revocer after you delete!
+                Are you Sure you want to delete this Image?
+                <p>
+                    You will ne be able to recover after this!
+                </p>
             </DialogContentText>
             </DialogContent>
             <DialogActions>
             <Button onClick={handleClose}>Cancle</Button>
-            
-              <Button onClick={handleDelete} autoFocus>
+            <Button onClick={handleDelete} autoFocus>
                 Yes
-              </Button>
-            
+            </Button>
             </DialogActions>
-        </Dialog>
-    </div>
+        </Dialog> */}
+    </Box>
   );
 }

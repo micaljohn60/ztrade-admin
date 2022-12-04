@@ -10,7 +10,7 @@ export const addSlider = (data) => async (dispatch) =>{
           process.env.REACT_APP_STATUS === "development"  ? 
           window.location.href = "http://localhost:3000/dashboard/slider" 
           : 
-          window.location.href = "https://talentandjobs-testing.web.app/dashboard/slider"
+          window.location.href = `${process.env.REACT_APP_WEB_ADMIN_PRODUCTION_PORT}dashboard/slider`
           
         }
         else {
@@ -32,7 +32,7 @@ export const updateSlider = (data,id) => async (dispatch) =>{
         process.env.REACT_APP_STATUS === "development"  ? 
         window.location.href = "http://localhost:3000/dashboard/slider" 
         : 
-        window.location.href = "https://talentandjobs-testing.web.app/dashboard/slider"
+        window.location.href = `${process.env.REACT_APP_WEB_ADMIN_PRODUCTION_PORT}dashboard/slider`
         
       }
       else {
@@ -66,7 +66,7 @@ export const deleteSlider = (id) => async (dispatch) =>{
         process.env.REACT_APP_STATUS === "development"  ? 
         window.location.href = "http://localhost:3000/dashboard/slider" 
         : 
-        window.location.href = "https://talentandjobs-testing.web.app/dashboard/slider"
+        window.location.href = `${process.env.REACT_APP_WEB_ADMIN_PRODUCTION_PORT}dashboard/slider`
         
       }
     }

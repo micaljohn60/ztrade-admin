@@ -4,10 +4,12 @@ import { useDispatch, useSelector } from 'react-redux';
 // material
 import { Container, Stack, Typography, Card, CardMedia, Box, MenuItem, TextField, Button, Grid, Paper, Radio, RadioGroup, FormControlLabel, FormControl, FormLabel, Snackbar, Checkbox } from '@mui/material';
 // components
-import MuiAlert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
+import Alert from '@mui/material/Alert';
 import { Icon } from '@iconify/react';
 import { styled } from '@mui/material/styles';
 import { v4 as uuidv4 } from 'uuid';
+import { useSnackbar } from 'notistack';
 import Page from '../../components/Page';
 import Iconify from '../../components/Iconify';
 import { fetchStores } from '../../redux/actions/store_actions';
@@ -23,19 +25,21 @@ import { addProduct, productCleanUp } from '../../redux/actions/product_actions'
 const Input = styled('input')({
   display: 'none',
 });
-const CustomAlert = React.forwardRef((props, ref) => {
-  return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
-});
+// const CustomAlert = React.forwardRef((props, ref) => {
+//   return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
+// });
 export default function CreateProduct() {
   const [open, setOpen] = useState(false);
-  const [job_category, setJobCategory] = useState('sales and marketing');
+
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [categoryId, setCategoryId] = useState('');
   const [storeId, setStoreId] = useState('');
-  const [salary, setSalary] = useState('0');
+  const [loading,setLoading] = useState(false);
   const [images, setImages] = useState([]);
+  const [subCategories, setSubCategories] = useState([]);
+  const [subCategory,setSubCategory]=useState('');
   const [skillInputFields, setSkillInputFields] = useState([{ id: uuidv4(), skillName: '' }])
   const dispatch = useDispatch();
 
@@ -48,8 +52,10 @@ export default function CreateProduct() {
   const [radioValue, setRadioValue] = useState("none");
   const [newArrival,setNewArrival] = useState(false);
   const [mostPopular,setMostPopular] = useState(false);
+  const [topSellingProduct,setTopSellingProduct] = useState(false);
   const [newArrivalString,setNewArrivalString] = useState('0');
   const [mostPopularString,setMostPopularString] = useState('0');
+  const [topSellingProductString,setTopSellingProductString] = useState('0');
 
   const onDrop = useCallback((acceptedFiles) => {
     acceptedFiles.map((file) => {
@@ -73,6 +79,17 @@ export default function CreateProduct() {
     else{
       setNewArrival(false)
       setNewArrivalString('0')
+    }
+  }
+
+  const _handleTopSellingProduct = ()=>{
+    if(!topSellingProduct){
+      setTopSellingProduct(true)
+      setTopSellingProductString('1')
+    }
+    else{
+      setTopSellingProduct(false)
+      setTopSellingProductString('0')
     }
   }
 
@@ -108,7 +125,17 @@ export default function CreateProduct() {
   }
 
   const handleChange = (event) => {
+    
     setCategoryId(event.target.value);
+  };
+
+  const handleSubChange = (event,value) => {
+    setSubCategories(value.sub_category)
+    
+  };
+
+  const handleSubCategoryChange = (event) => {
+    setSubCategory(event.target.value);
   };
 
   const handleStoreChange = (event) => {
@@ -118,7 +145,11 @@ export default function CreateProduct() {
 
   const handleSubmit = (e) => {
     e.preventDefault()
-    const formData = new FormData();
+    if(images.length <=0){
+      alert("Need Image")
+    }
+    else{
+      const formData = new FormData();
     for (let i = 0; i < images.length; i += 1) {
       formData.append(`thumbnails${i}`, images[i]);
     }
@@ -131,7 +162,8 @@ export default function CreateProduct() {
     formData.append('image_list', images.length)
     formData.append('new_arrival',newArrivalString);
     formData.append('most_popular',mostPopularString);
-
+    formData.append('top_selling',topSellingProductString);
+    formData.append('subcategory_id',subCategory);
     const data = {
       "name": name,
       "price": price,
@@ -141,9 +173,9 @@ export default function CreateProduct() {
       "percentage_id": 1,
       "store_id": storeId
     }
+    setLoading(true)
     dispatch(addProduct(formData))
-    console.log(formData.get('thumbnails0'))
-    console.log(formData.get('thumbnails1'))
+    }
 
   }
 
@@ -164,18 +196,25 @@ export default function CreateProduct() {
     }
     setOpen(false);
   };
+  const { enqueueSnackbar, closeSnackbar } = useSnackbar();
 
   useEffect(() => {
     dispatch(fetchCategories())
     dispatch(fetchStores())
     if (isError) {
       setOpen(true)
+      Object.values(productError.errors).map(error=>(
+        enqueueSnackbar(error,{ variant: 'error'})
+      ))
+      setLoading(false);
+     
     }
 
     return () => {
       setTimeout(() => {
+        closeSnackbar()
         dispatch(productCleanUp())
-      }, 1000);
+      }, 2000);
     }
 
   }, [isError])
@@ -185,40 +224,26 @@ export default function CreateProduct() {
       <Container>
         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
 
-          {
-            isError ?
-              <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
-                <CustomAlert onClose={handleClose} severity="error" sx={{ width: '100%', }}>
-
-                  {/* {productError.errors.name ?? productError.errors.name} &nbsp;
-                  {productError.errors.item_description}
-                  {productError.errors.image}
-                  {productError.errors.price}
-                  {
-                    productError.errors.category_id ?
-                      "Please Select a category"
-                      :
-                      ""
-                  } */}
-                </CustomAlert>
-              </Snackbar>
-              :
-              ""
-          }
+        
 
 
-          <Typography variant="h4" gutterBottom color="#108992">
+          <Typography variant="h4" gutterBottom color="#1B458D">
             Create New Product
           </Typography>
+         {
+          loading?
+          <CircularProgress />
+          :
           <Button
-            variant="contained"
+          variant="contained"
 
-            onClick={handleSubmit}
-
-            startIcon={<Iconify icon="eva:plus-fill" />}
-          >
-            Confirm
-          </Button>
+          onClick={handleSubmit}
+          color="primary"
+          startIcon={<Iconify icon="eva:plus-fill" />}
+        >
+          Confirm
+        </Button>
+         }
         </Stack>
 
         <Card>
@@ -248,7 +273,7 @@ export default function CreateProduct() {
 
             <Box display="flex" alignItems="center" justifyContent="Center">
               <FormControl>
-                <FormLabel id="demo-row-radio-buttons-group-label">Is this product has a store? </FormLabel>
+                <FormLabel id="demo-row-radio-buttons-group-label">Is this product has a Brand? </FormLabel>
                 <RadioGroup
                   row
                   aria-labelledby="demo-row-radio-buttons-group-label"
@@ -257,17 +282,17 @@ export default function CreateProduct() {
                   onChange={handleRadioChange}
                 >
                   <FormControlLabel value="none" control={<Radio />} label="None" />
-                  <FormControlLabel value="yes" control={<Radio />} label="It has a Store" />
+                  <FormControlLabel value="yes" control={<Radio />} label="It has a Brand" />
                 </RadioGroup>
               </FormControl>
 
               <TextField
                 id="outlined-select-currency"
                 select
-                label="Select a releted store"
+                label="Select a releted Brand"
                 value={storeId}
                 onChange={handleStoreChange}
-                helperText="Please select a Store"
+                helperText="Please select a Brand"
                 disabled={radioValue === "none" ? `true` : false}
                 sx={{ m: 2 }}
               >
@@ -279,17 +304,32 @@ export default function CreateProduct() {
               </TextField>
             </Box>
 
-            <Box>
-              <Checkbox
+            <Box 
+            display="flex"
+            justifyContent="center"
+            alignItems="center"
+            >
+              <Checkbox                
                 checked={newArrival}
                 onChange={_handleNewArrival}
                 inputProps={{ 'aria-label': 'controlled' }}
               />
+              <label>New Arrival</label>
               <Checkbox
+              sx={{ml:4}}
                 checked={mostPopular}
                 onChange={_handleMostPopular}
                 inputProps={{ 'aria-label': 'controlled' }}
               />
+               <label>Most Popular</label>
+
+               <Checkbox
+              sx={{ml:4}}
+                checked={topSellingProduct}
+                onChange={_handleTopSellingProduct}
+                inputProps={{ 'aria-label': 'controlled' }}
+              />
+               <label>Top Selling Product</label>
             </Box>
 
             <Box display="flex"
@@ -306,13 +346,32 @@ export default function CreateProduct() {
                 sx={{ m: 2 }}
               >
                 {categories.map((option) => (
+                  <MenuItem key={option.id} value={option.id} onClick={e=>handleSubChange(e,option)}>
+                    {option.name}
+                  </MenuItem>
+                ))}
+              </TextField>
+
+              <TextField
+                id="outlined-select-currency"
+                select
+                label="Select"
+                value={subCategory}
+                onChange={handleSubCategoryChange}
+                helperText="Please select a Product Sub category"
+                sx={{ m: 2 }}
+              >
+                <MenuItem value="None">
+                    None
+                  </MenuItem>
+                {subCategories.map((option) => (
                   <MenuItem key={option.id} value={option.id}>
                     {option.name}
                   </MenuItem>
                 ))}
               </TextField>
 
-              <TextField id="outlined-basic" onChange={e => setPrice(e.target.value)} error={price === ""} helperText={price === "" ? 'Empty field!' : ' '} label="Product Price" variant="outlined" sx={{ m: 2 }} />
+              <TextField id="outlined-basic" type='number' onChange={e => setPrice(e.target.value)} error={price === ""} helperText={price === "" ? 'Empty field!' : ' '} label="Product Price" variant="outlined" sx={{ m: 2 }} />
 
             </Box>
 
@@ -362,7 +421,7 @@ export default function CreateProduct() {
                                 {
                                   images.length === 0 ?
                                     <Typography variant="subtitle1" display="block" gutterBottom sx={{ mt: 3 }}>
-                                      No Images, Use Shift to select Multiple Images
+                                      No Images, Use Ctrl to select Multiple Images
                                     </Typography>
                                     :
 

@@ -23,6 +23,11 @@ const navConfig = [
     icon: getIcon('gridicons:create'),
   },
   {
+    title: 'product',
+    path: '/dashboard/products',
+    icon: getIcon('eva:shopping-bag-fill'),
+  },
+  {
     title: 'Slider Management',
     path: '/dashboard/slider',
     icon: getIcon('dashicons:image-flip-horizontal'),
@@ -47,6 +52,12 @@ const navConfig = [
     path: '/dashboard/rolesandpermisions',
     icon: getIcon('icon-park-outline:permissions'),
   },
+  
+  {
+    title: 'Add New User',
+    path: '/dashboard/addnewusers',
+    icon: getIcon('akar-icons:person-add'),
+  },
   {
     title: 'about us',
     path: '/dashboard/aboutus',
@@ -58,15 +69,11 @@ const navConfig = [
     icon: getIcon('dashicons:privacy'),
   },
   {
-    title: 'Add New User',
-    path: '/dashboard/addnewusers',
-    icon: getIcon('akar-icons:person-add'),
+    title: 'Site Setting',
+    path: '/dashboard/site_setting',
+    icon: getIcon('icon-park-outline:setting-web'),
   },
-  {
-    title: 'product',
-    path: '/dashboard/products',
-    icon: getIcon('eva:shopping-bag-fill'),
-  },
+  
   // {
   //   title: 'blog',
   //   path: '/dashboard/blog',

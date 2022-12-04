@@ -23,7 +23,7 @@ export const addProduct = (data) => async (dispatch) =>{
           process.env.REACT_APP_STATUS === "development"  ? 
           window.location.href = "http://localhost:3000/dashboard/products" 
           : 
-          window.location.href = "https://talentandjobs-testing.web.app/dashboard/products"
+          window.location.href = `${process.env.REACT_APP_WEB_ADMIN_PRODUCTION_PORT}dashboard/products`
           
         }
         else{
@@ -38,7 +38,7 @@ export const addProduct = (data) => async (dispatch) =>{
 export const deleteProduct = (data) => async (dispatch) =>{
 
   
-  const response = await ztrade_api.delete(`api/product/delete${data}`,data).then(
+  const response = await ztrade_api.delete(`api/product/delete/${data}`).then(
     res=>{
    
       if(res.status === 201){
@@ -47,7 +47,53 @@ export const deleteProduct = (data) => async (dispatch) =>{
         process.env.REACT_APP_STATUS === "development"  ? 
         window.location.href = "http://localhost:3000/dashboard/products" 
         : 
-        window.location.href = "https://talentandjobs-testing.web.app/dashboard/products"
+        window.location.href = `${process.env.REACT_APP_WEB_ADMIN_PRODUCTION_PORT}dashboard/products`
+        
+      }
+      else{
+        dispatch({type:ActionTypes.PRODUCT_MESSAGE,payload: res.error})
+      }
+    }
+  ).catch(err=>{
+    dispatch({type:ActionTypes.PRODUCT_MESSAGE,payload: err.response.data})
+  }) 
+
+}
+
+export const deleteProductImage = (data) => async (dispatch) =>{
+
+  
+  const response = await ztrade_api.delete(`api/product/imagedelete/${data}`).then(
+    res=>{
+   
+      if(res.status === 200){
+
+        dispatch({type:ActionTypes.SUCCESS_MESSAGE})
+        
+      }
+      else{
+        dispatch({type:ActionTypes.PRODUCT_MESSAGE,payload: res.error})
+      }
+    }
+  ).catch(err=>{
+    dispatch({type:ActionTypes.PRODUCT_MESSAGE,payload: err.response.data})
+  }) 
+
+}
+
+export const updateProduct = (id,data) => async (dispatch) =>{
+
+  
+  const response = await ztrade_api.post(`api/product/update/${id}`,data).then(
+    res=>{
+   
+      if(res.status === 200){
+
+        dispatch({type:ActionTypes.SUCCESS_MESSAGE,payload : "Successfully Updated"})
+        process.env.REACT_APP_STATUS === "development"  ? 
+        window.location.href = "http://localhost:3000/dashboard/products" 
+        : 
+        window.location.href = `${process.env.REACT_APP_WEB_ADMIN_PRODUCTION_PORT}dashboard/products`
         
       }
       else{
@@ -71,4 +117,8 @@ export const fetchSingleProducts = (id) => async (dispatch) => {
 
 export const productCleanUp =() =>(dispatch) =>{
   dispatch({type:ActionTypes.PRODUCT_CLEAN_UP,payload : ""})
+}
+
+export const singleProductCleanUp =() =>(dispatch) =>{
+  dispatch({type:ActionTypes.SINGLE_PRODUCT_CLEAN_UP,payload : ""})
 }

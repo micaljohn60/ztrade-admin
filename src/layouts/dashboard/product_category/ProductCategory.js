@@ -5,6 +5,7 @@ import MuiAlert from '@mui/material/Alert';
 import { useDispatch, useSelector } from 'react-redux';
 import { styled } from '@mui/material/styles';
 import { Icon } from '@iconify/react';
+import CircularProgress from '@mui/material/CircularProgress';
 import { addCategory, fetchCategories, addSubCategory, fetchSubCategories,cleanUp, updateCategory } from '../../../redux/actions/category_actions';
 import Page from '../../../components/Page';
 import Iconify from '../../../components/Iconify';
@@ -32,9 +33,12 @@ export default function ProductCategory() {
     const loading = useSelector((state) => state.categories.loading);
     const categoryError = useSelector((state) => state.categories.errorMessage);
     const isError = useSelector((state) => state.categories.error);
+    const [loadingState,setLoadingState] = useState(false);
+    const [subLoadingState,setSubLoadingState] = useState(false);
 
 
     const handleClick = (e) => {
+        setLoadingState(true);
         const formData = new FormData();
         formData.append("name", categoryName);
         formData.append("image", image);
@@ -42,6 +46,7 @@ export default function ProductCategory() {
     }
 
     const handleSubCategory = (e) => {        
+        setSubLoadingState(true)
         const data = {
             "name": subCategoryName,
             "category_id": dropdownCategory
@@ -68,6 +73,8 @@ export default function ProductCategory() {
         dispatch(fetchSubCategories());
         if(isError){
             setOpen(true)
+            setLoadingState(false);
+            setSubLoadingState(false)
         }
         
         return()=>{
@@ -103,16 +110,22 @@ export default function ProductCategory() {
                             :
                             ""
                     }
-                        <Typography variant="h4" gutterBottom color="#108992">
+                        <Typography variant="h4" gutterBottom color="#1B458D">
                             Create New Product Category
                         </Typography>
-                        <Button
+                        {
+                            loadingState ?
+                            <CircularProgress />
+                            :
+                            <Button
                             variant="contained"
                             onClick={handleClick}
                             startIcon={<Iconify icon="eva:plus-fill" />}
                         >
                             Confirm
                         </Button>
+                        }
+                        
                     </Stack>
 
                     <Card >
@@ -209,7 +222,11 @@ export default function ProductCategory() {
                                         ))}
                                     </TextField>
 
-                                    <Button
+                                    {
+                                        subLoadingState ?
+                                        <CircularProgress />
+                                        :
+                                        <Button
                                         variant="contained"
                                         sx={{ mt: 3 }}
                                         onClick={handleSubCategory}
@@ -217,6 +234,7 @@ export default function ProductCategory() {
                                     >
                                         Add
                                     </Button>
+                                    }
 
                                     <Box
                                         component="form"

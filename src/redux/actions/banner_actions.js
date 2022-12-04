@@ -20,7 +20,7 @@ export const deleteBanner  = (id) => async (dispatch) =>{
         process.env.REACT_APP_STATUS === "development"  ? 
         window.location.href = "http://localhost:3000/dashboard/banner" 
         : 
-        window.location.href = "https://talentandjobs-testing.web.app/dashboard/productcategory"
+        window.location.href = `${process.env.REACT_APP_WEB_ADMIN_PRODUCTION_PORT}dashboard/banner`
         
       }
     }
@@ -40,15 +40,15 @@ export const addBanner = (data) => async (dispatch) =>{
           process.env.REACT_APP_STATUS === "development"  ? 
           window.location.href = "http://localhost:3000/dashboard/banner" 
           : 
-          window.location.href = "https://talentandjobs-testing.web.app/dashboard/productcategory"
+          window.location.href = `${process.env.REACT_APP_WEB_ADMIN_PRODUCTION_PORT}dashboard/banner`
           
         }
         else{
-          dispatch({type:ActionTypes.ERROR_MESSAGE,payload: res.error})
+          dispatch({type:ActionTypes.BANNER_ERROR_MESSAGE,payload: res.error})
         }
       }
     ).catch(err=>{
-      dispatch({type:ActionTypes.ERROR_MESSAGE,payload: err.response.data})
+      dispatch({type:ActionTypes.BANNER_ERROR_MESSAGE,payload: err.response.data})
     }) 
   
 }
@@ -65,7 +65,7 @@ export const updateBanner = (data,id) => async (dispatch) =>{
         process.env.REACT_APP_STATUS === "development"  ? 
         window.location.href = "http://localhost:3000/dashboard/banner" 
         : 
-        window.location.href = "https://talentandjobs-testing.web.app/dashboard/productcategory"
+        window.location.href = `${process.env.REACT_APP_WEB_ADMIN_PRODUCTION_PORT}dashboard/banner`
         
       }
       else{
@@ -79,7 +79,7 @@ export const updateBanner = (data,id) => async (dispatch) =>{
 }
 
 export const bannerCleanUp = () => (dispatch) =>{
-  dispatch({type:ActionTypes.CATEGORY_CLEAN_UP,payload: ""})
+  dispatch({type:ActionTypes.BANNER_CLEAN_UP,payload: ""})
 }
 
 export const tokenConfigFile =() =>{

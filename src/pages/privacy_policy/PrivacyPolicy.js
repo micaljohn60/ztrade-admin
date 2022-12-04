@@ -1,15 +1,16 @@
 import { useState } from "react";
-import draftToHtml from "draftjs-to-html";
-import { EditorState,convertToRaw } from 'draft-js';
-import { Editor } from "react-draft-wysiwyg";
+// import draftToHtml from "draftjs-to-html";
+// import { EditorState,convertToRaw } from 'draft-js';
+// import { Editor } from "react-draft-wysiwyg";
 import "react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { Card, Box, Button } from "@mui/material";
+import Editor from "../../share/Editor/Editor";
 
 export default function PrivacyPolicy() {
 
-    const [editorState,setEditorState] = useState(EditorState.createEmpty())
+    const [editorState,setEditorState] = useState('')
     const _handleClick = () =>(
-        console.log(JSON.stringify(draftToHtml(convertToRaw(editorState.getCurrentContent()))))
+        console.log(editorState)       
 
     )
 
@@ -22,13 +23,7 @@ export default function PrivacyPolicy() {
         </Box>
             
             <Card sx={{p:3}} >
-            <Editor
-                editorState={editorState}
-                toolbarClassName="toolbarClassName"
-                wrapperClassName="wrapperClassName"
-                editorClassName="editorClassName border"
-                onEditorStateChange={setEditorState}
-            />
+            <Editor state={setEditorState} value={editorState} />
             </Card>
             
         </>

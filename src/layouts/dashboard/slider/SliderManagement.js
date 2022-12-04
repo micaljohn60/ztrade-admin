@@ -101,10 +101,10 @@ export default function SliderManagement() {
         }
 
         return()=>{
-            setTimeout(() => {            
+            setTimeout(() => {
                 dispatch(sliderCleanUp())
             }, 1000);
-            
+
         }
     }, [isError])
 
@@ -118,7 +118,7 @@ export default function SliderManagement() {
                         isError ?
                             <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
                                 <CustomAlert onClose={handleClose} severity="error" sx={{ width: '100%', }}>
-                                    {sliderError.errors.name && ''} &nbsp;
+                                    {sliderError.errors.name} &nbsp;
                                     {sliderError.errors.image}
                                     {
                                     sliderError.errors.slider_id ?
@@ -166,7 +166,7 @@ export default function SliderManagement() {
                             label="Select"
                             value={brandId}
                             onChange={handleChange}
-                            helperText="Please select a Product Sub category"
+                            helperText="Please select a Brand"
                             sx={{ m: 2 }}
                             disabled={radioValue === "homescreen" ? `true` : false}
                         >
@@ -222,7 +222,7 @@ export default function SliderManagement() {
                                                         </Button>
                                                     </label>
 
-                                                    
+
                                                     <Grid container justifyContent="center" alignItems="center" sx={{mt:2}}>
                                                         {
                                                             image &&
@@ -236,7 +236,7 @@ export default function SliderManagement() {
                                                                     alt="slider image"
                                                                 />
                                                             </Box>
-                                                        }   
+                                                        }
                                                     </Grid>
 
                                                 </Grid>
@@ -275,9 +275,9 @@ export default function SliderManagement() {
                         }
                     </Grid>
                     }
-                    
-                   
-                    
+
+
+
 
                     {/* <Row data={sliders}/> */}
 

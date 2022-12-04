@@ -22,11 +22,19 @@ export const AboutUsReducer = (state = aboutUsInitialState,{type,payload}={})=>{
                     loading : false,
                     message  : "Successfully Updated"
                 }
+        case ActionTypes.GET_ABOUT_US_ERROR:
+            return {
+                ... state,
+                loading : false,
+                error:true,
+                errorMessage : payload
+            }
         case ActionTypes.ABOUT_US_CLEAN_UP:
             return {
                 ... state,
-                loading : true,
-                aboutus  : []
+                
+                error: false,
+                errorMessage : []
             }
         default:
             return state;

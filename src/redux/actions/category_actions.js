@@ -20,7 +20,7 @@ export const deleteCategory  = (id) => async (dispatch) =>{
         process.env.REACT_APP_STATUS === "development"  ? 
         window.location.href = "http://localhost:3000/dashboard/productcategory" 
         : 
-        window.location.href = "https://talentandjobs-testing.web.app/dashboard/productcategory"
+        window.location.href = `${process.env.REACT_APP_WEB_ADMIN_PRODUCTION_PORT}dashboard/productcategory`
         
       }
     }
@@ -40,7 +40,7 @@ export const addCategory = (data) => async (dispatch) =>{
           process.env.REACT_APP_STATUS === "development"  ? 
           window.location.href = "http://localhost:3000/dashboard/productcategory" 
           : 
-          window.location.href = "https://talentandjobs-testing.web.app/dashboard/productcategory"
+          window.location.href = `${process.env.REACT_APP_WEB_ADMIN_PRODUCTION_PORT}dashboard/productcategory`
           
         }
         else{
@@ -65,7 +65,7 @@ export const updateCategory = (data,id) => async (dispatch) =>{
         process.env.REACT_APP_STATUS === "development"  ? 
         window.location.href = "http://localhost:3000/dashboard/productcategory" 
         : 
-        window.location.href = "https://talentandjobs-testing.web.app/dashboard/productcategory"
+        window.location.href = `${process.env.REACT_APP_WEB_ADMIN_PRODUCTION_PORT}dashboard/productcategory`
         
       }
       else{
@@ -100,7 +100,7 @@ export const addSubCategory = (data) => async (dispatch) =>{
         process.env.REACT_APP_STATUS === "development"  ? 
         window.location.href = "http://localhost:3000/dashboard/productcategory" 
         : 
-        window.location.href = "https://talentandjobs-testing.web.app/dashboard/productcategory"
+        window.location.href = `${process.env.REACT_APP_WEB_ADMIN_PRODUCTION_PORT}dashboard/productcategory`
         
       }
     }
@@ -118,7 +118,7 @@ export const deleteSubCategory = (id) => async (dispatch) =>{
         process.env.REACT_APP_STATUS === "development"  ? 
         window.location.href = "http://localhost:3000/dashboard/productcategory" 
         : 
-        window.location.href = "https://talentandjobs-testing.web.app/dashboard/productcategory"
+        window.location.href = `${process.env.REACT_APP_WEB_ADMIN_PRODUCTION_PORT}dashboard/productcategory`
         
       }
     }
@@ -136,7 +136,7 @@ export const updateSubCategory = (data,id) => async (dispatch) =>{
         process.env.REACT_APP_STATUS === "development"  ? 
         window.location.href = "http://localhost:3000/dashboard/productcategory" 
         : 
-        window.location.href = "https://talentandjobs-testing.web.app/dashboard/productcategory"
+        window.location.href = `${process.env.REACT_APP_WEB_ADMIN_PRODUCTION_PORT}dashboard/productcategory`
         
       }
       if (res.status === 404){

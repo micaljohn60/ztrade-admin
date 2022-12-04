@@ -21,11 +21,28 @@ import Store from './pages/store/Store';
 import EditProduct from './pages/products/ProductEdit';
 import AboutUs from './pages/about_us/AboutUs';
 import PrivacyPolicy from './pages/privacy_policy/PrivacyPolicy';
+import SiteSetting from './pages/site_setting/SiteSetting';
+import { getCookie } from './cookies/cookie';
 
 // ----------------------------------------------------------------------
 
 export default function Router() {
+
+  const getUserCookie = getCookie("token");
+
   return useRoutes([
+    getUserCookie === null ?
+
+    {
+      path: '/',
+      element: <Login />,    
+      children :[
+        { path: '*', element: <Navigate to="/404" /> }
+      ]  
+      
+    }
+    :
+
     {
       path: '/dashboard',
       element: <DashboardLayout />,
@@ -41,6 +58,7 @@ export default function Router() {
         { path: 'addnewusers', element: <AddNewUser/>},
         // { path: 'blog', element: <Blog /> },
         { path: 'createproduct', element: <CreateProduct/>},
+        { path: 'site_setting', element: <SiteSetting/>},
         { path: 'slider', element: <SliderManagement/>},
         { path: 'productcategory', element: <ProductCategory/>},
         { path: 'banner', element: <BannerManagement/>}
@@ -51,12 +69,14 @@ export default function Router() {
       element: <LogoOnlyLayout />,
       children: [
         { path: '/', element: <Navigate to="/dashboard/app" /> },
-        { path: 'login', element: <Login /> },
-        { path: 'register', element: <Register /> },
+        // { path: 'login', element: <Login /> },
+        // { path: 'register', element: <Register /> },
         { path: '404', element: <NotFound /> },
         { path: '*', element: <Navigate to="/404" /> },
       ],
     },
     { path: '*', element: <Navigate to="/404" replace /> },
+
+  
   ]);
 }

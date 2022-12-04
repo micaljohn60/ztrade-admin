@@ -22,10 +22,11 @@ const Input = styled('input')({
 export default function BannerEdit({ bannerName, bannerId}) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(null);
-  const [newName, setNewName] = useState(null);
+  const [newName, setNewName] = useState('');
   const [id, setId] = useState(null);
-  const [image, setImage] = useState(null)
+  const [image, setImage] = useState('')
   const dispatch = useDispatch();
+  const [isLoading,setIsLoading] = useState(false);
 
   const handleClickOpen = () => {
     setId(bannerId)
@@ -39,10 +40,10 @@ export default function BannerEdit({ bannerName, bannerId}) {
   };
 
   const updateAction = (e) => {
+    setIsLoading(true)
     const formData = new FormData();
     formData.append("name", newName);
     formData.append("image", image);
-
     dispatch(updateBanner(formData,bannerId))
 }
 
@@ -77,7 +78,7 @@ export default function BannerEdit({ bannerName, bannerId}) {
 
 
               <label htmlFor="contained-button-file-1" className="mb-2">
-                <Input accept="image/*" id="contained-button-file-1" multiple type="file" onChange={e => setImage(e.target.files[0])} />
+                <Input accept="image/*" id="contained-button-file-1" type="file" onChange={e => setImage(e.target.files[0])} />
                 <Button variant="contained" component="span" sx={{ mb: "2" }}>
                   <Icon icon="carbon:add-filled" />
                 </Button>
@@ -103,9 +104,14 @@ export default function BannerEdit({ bannerName, bannerId}) {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancle</Button>
-          <Button onClick={updateAction} autoFocus>
+          {
+            isLoading ?
+            "Loading"
+            :
+            <Button onClick={updateAction} autoFocus>
             Yes
           </Button>
+          }
         </DialogActions>
       </Dialog>
     </div>

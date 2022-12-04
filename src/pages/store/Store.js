@@ -99,7 +99,7 @@ export default function Store() {
 
     return (
         <>
-            <Page title="Stores/Brands">
+            <Page title="Brands">
                 <Container>
                     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
 
@@ -120,8 +120,8 @@ export default function Store() {
                             :
                             ""
                     }
-                        <Typography variant="h4" gutterBottom color="#108992">
-                            Create Store
+                        <Typography variant="h4" gutterBottom color="#1B458D">
+                            Create Brand
                         </Typography>
                         <Button
                             variant="contained"
@@ -218,7 +218,7 @@ export default function Store() {
                         <Grid sx={{ flexGrow: 1, mt: 5 }} container spacing={1}>
                         {    
                             stores.length === 0 ?
-                            "No Stores Here"
+                            "No Brands Here"
                             :
                             <Grid container justifyContent="start" spacing={1}>
                                 {
