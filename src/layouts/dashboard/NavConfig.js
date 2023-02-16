@@ -13,9 +13,14 @@ const navConfig = [
   },
   
   {
-    title: 'user',
+    title: 'staffs',
     path: '/dashboard/user',
     icon: getIcon('eva:people-fill'),
+  },
+  {
+    title: 'customers',
+    path: '/dashboard/customers',
+    icon: getIcon('mdi:users'),
   },
   {
     title: 'Upload Product',
@@ -69,6 +74,11 @@ const navConfig = [
     icon: getIcon('dashicons:privacy'),
   },
   {
+    title: 'Terms and Conditions',
+    path: '/dashboard/terms_and_conditions',
+    icon: getIcon('dashicons:privacy'),
+  },
+  {
     title: 'Site Setting',
     path: '/dashboard/site_setting',
     icon: getIcon('icon-park-outline:setting-web'),
@@ -89,11 +99,11 @@ const navConfig = [
   //   path: '/register',
   //   icon: getIcon('eva:person-add-fill'),
   // },
-  {
-    title: 'Not found',
-    path: '/404',
-    icon: getIcon('eva:alert-triangle-fill'),
-  },
+  // {
+  //   title: 'Not found',
+  //   path: '/404',
+  //   icon: getIcon('eva:alert-triangle-fill'),
+  // },
 ];
 
 export default navConfig;

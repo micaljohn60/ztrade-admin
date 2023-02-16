@@ -1,18 +1,21 @@
+import { getCookie } from "src/cookies/cookie";
 import ztrade_api from "../../api/ztrade_api";
 import { ActionTypes } from "./types";
 
 export const fetchCategories = () => async (dispatch) => {
-    const response = await ztrade_api.get("api/category/list")
+    const response = await ztrade_api.get("api/category/list",tokenConfig(getCookie("token")))
     .then(res=>{
       dispatch({type:ActionTypes.FETCH_CATEGORIES,payload:res.data   })
     }).catch(err=>{
-      dispatch({type:ActionTypes.FETCH_CATEGORIES,payload:[]  })
+      if(err.response.status == 403){
+        dispatch({type:ActionTypes.CATEGORY_PERMISSION_DENINE,payload:[]  })
+      }
     });    
 }
 
 
 export const deleteCategory  = (id) => async (dispatch) =>{
-  const response = await ztrade_api.delete(`api/category/delete/${id}`).then(
+  const response = await ztrade_api.delete(`api/category/delete/${id}`,tokenConfig(getCookie("token"))).then(
     res=>{
    
       if(res.status === 201){
@@ -31,7 +34,7 @@ export const deleteCategory  = (id) => async (dispatch) =>{
 export const addCategory = (data) => async (dispatch) =>{
 
   
-    const response = await ztrade_api.post("api/category/create",data).then(
+    const response = await ztrade_api.post("api/category/create",data,tokenConfig(getCookie("token"))).then(
       res=>{
      
         if(res.status === 201){
@@ -56,7 +59,7 @@ export const addCategory = (data) => async (dispatch) =>{
 export const updateCategory = (data,id) => async (dispatch) =>{
 
   
-  const response = await ztrade_api.post(`api/category/update/${id}`,data,tokenConfigFile()).then(
+  const response = await ztrade_api.post(`api/category/update/${id}`,data,tokenConfig(getCookie("token"))).then(
     res=>{
    
       if(res.status === 201){
@@ -83,7 +86,7 @@ export const cleanUp = () => (dispatch) =>{
 }
 
 export const fetchSubCategories = () => async (dispatch) => {
-  const response = await ztrade_api.get("api/subcategory/list")
+  const response = await ztrade_api.get("api/subcategory/list",tokenConfig(getCookie("token")))
   .then(res=>{
     dispatch({type:ActionTypes.FETCH_SUB_CATEGORIES,payload:res.data   })
   }).catch(err=>{
@@ -92,7 +95,7 @@ export const fetchSubCategories = () => async (dispatch) => {
 }
 
 export const addSubCategory = (data) => async (dispatch) =>{
-  const response = await ztrade_api.post("api/subcategory/create",data).then(
+  const response = await ztrade_api.post("api/subcategory/create",data,tokenConfig(getCookie("token"))).then(
     res=>{
    
       if(res.status === 201){
@@ -110,7 +113,7 @@ export const addSubCategory = (data) => async (dispatch) =>{
 }
 
 export const deleteSubCategory = (id) => async (dispatch) =>{
-  const response = await ztrade_api.delete(`api/subcategory/delete/${id}`).then(
+  const response = await ztrade_api.delete(`api/subcategory/delete/${id}`,tokenConfig(getCookie("token"))).then(
     res=>{
    
       if(res.status === 201){
@@ -127,7 +130,7 @@ export const deleteSubCategory = (id) => async (dispatch) =>{
 
 export const updateSubCategory = (data,id) => async (dispatch) =>{
   
-  const response = await ztrade_api.post(`api/subcategory/update/${id}`,data,tokenConfigFile()).then(
+  const response = await ztrade_api.post(`api/subcategory/update/${id}`,data,tokenConfig(getCookie("token"))).then(
     res=>{
    
       if(res.status === 201){
@@ -152,17 +155,20 @@ export const updateSubCategory = (data,id) => async (dispatch) =>{
 
 }
 
-export const tokenConfigFile =() =>{
+
+export const tokenConfig =(token) =>{
  
-  // const userToken = JSON.parse(token)
+  const userToken = JSON.parse(token)
   const config = {
       headers: {
         "Content-Type": "multipart/form-data",
+        "Accept" : "application/json"
       },
     };
-  // if(userToken) {
-  //     config.headers['Authorization'] = `Bearer ${userToken}`;
-  // }
+  if(userToken) {
+    
+      config.headers['Authorization'] = `Bearer ${userToken}`;
+  }
 
   return config;
 }

@@ -6,7 +6,9 @@ const categoryInitialState ={
     category : [],
     subcategories: [],
     error : false,
-    errorMessage : []
+    errorMessage : [],
+    deninePermission : false,
+    deninePermissionMessage : []
 }
 
 export const CategoryReducer = (state = categoryInitialState,{type,payload}={})=>{
@@ -22,6 +24,15 @@ export const CategoryReducer = (state = categoryInitialState,{type,payload}={})=
                 ... state,
                 loading : false,
                 subcategories  : payload
+            }
+
+        case ActionTypes.CATEGORY_PERMISSION_DENINE:
+            return {
+                ... state,
+                loading : false,
+                deninePermission : true,
+                categories : [],
+                subcategories : []
             }
         case ActionTypes.ERROR_MESSAGE:
             return {

@@ -14,6 +14,7 @@ import Scrollbar from '../../components/Scrollbar';
 import NavSection from '../../components/NavSection';
 //
 import navConfig from './NavConfig';
+import { useSelector } from 'react-redux';
 
 // ----------------------------------------------------------------------
 
@@ -46,6 +47,9 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
 
   const isDesktop = useResponsive('up', 'lg');
 
+  const userLoading = useSelector((state) => state.user.isLoading);
+  const user = useSelector((state) => state.user.user);
+
   useEffect(() => {
     if (isOpenSidebar) {
       onCloseSidebar();
@@ -70,7 +74,7 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
             <Avatar src={account.photoURL} alt="photoURL" />
             <Box sx={{ ml: 2 }}>
               <Typography variant="subtitle2" sx={{ color: 'text.primary' }}>
-                {account.displayName}
+                {userLoading ? "Loading" : user.user.name}
               </Typography>
               <Typography variant="body2" sx={{ color: 'text.secondary' }}>
                 {account.role}

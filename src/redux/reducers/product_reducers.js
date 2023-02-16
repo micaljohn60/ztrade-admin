@@ -3,8 +3,11 @@ import { ActionTypes } from "../actions/types"
 const productInitialState ={
     loading : true,
     products: [],  
+    length : 0,
     error : false,
-    errorMessage : []
+    errorMessage : [],
+    deninePermission : false,
+    deninePermissionMessage : []
 }
 
 const singleProductInitialState ={
@@ -24,12 +27,25 @@ export const ProductReducer = (state = productInitialState,{type,payload}={})=>{
                 loading : false,
                 products  : payload
             }
+        case ActionTypes.FETCH_PRODUCTS_LENGTH:
+            return{
+                ...state,
+                loading : true,
+                length : payload,
+            }
         case ActionTypes.PRODUCT_MESSAGE:
             return{
                 ... state,
                 loading : false,
                 error : true,
                 errorMessage : payload
+            }
+        case ActionTypes.PRODUCT_PERMISSION_DENINE:
+            return{
+                loading : false,
+                deninePermission : true,
+                error : false,
+                products: [], 
             }
             case ActionTypes.PRODUCT_CLEAN_UP:
                 return {
@@ -58,6 +74,12 @@ export const SingleProductReducer = (state = singleProductInitialState,{type,pay
                 loading : false,
                 message : "Successfully Updated",
                
+            }
+        case ActionTypes.PRODUCT_PERMISSION_DENINE:
+            return{
+                loading : false,
+                deninePermission : true,
+                error : false,
             }
         // case ActionTypes.PRODUCT_MESSAGE:
         //     return{

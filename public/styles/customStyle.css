@@ -11,6 +11,26 @@
  
 }
 
+.pagination-container{
+  overflow: auto;
+}
+
+.pagination-container select{
+  border: 2px solid #1B458D;
+  border-radius: 10px;
+  padding: 3px;
+}
+
+.pagination-container select::-webkit-scrollbar-track {
+  border: rgb(180, 180, 180);
+  background-color: #ff6536;
+}
+
+.pagination-container select::-webkit-scrollbar-thumb {
+  background-color: #3677ef;
+  border: 1px solid rgb(193, 193, 193);
+}
+
 
 .editorClassName{  
   background-color: rgb(194, 194, 194);

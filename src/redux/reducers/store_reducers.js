@@ -5,7 +5,9 @@ const storeInitialState ={
     stores: [],
     store : [],    
     error : false,
-    errorMessage : []
+    errorMessage : [],
+    deninePermission : false,
+    deninePermissionMessage : []
 }
 
 export const StoreReducer = (state = storeInitialState,{type,payload}={})=>{
@@ -21,6 +23,13 @@ export const StoreReducer = (state = storeInitialState,{type,payload}={})=>{
                 ... state,
                 loading : false,
                 store  : payload
+            }
+        case ActionTypes.STORE_PERMISSION_DENINE:
+            return {
+                ... state,
+                loading : false,
+                deninePermission : true,
+                stores : []
             }
         case ActionTypes.STORE_MESSAGE:
             return {

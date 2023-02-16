@@ -29,6 +29,7 @@ export default function LoginForm() {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading,setLoading] = useState(false);
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -55,9 +56,8 @@ export default function LoginForm() {
   } = methods;
 
   const onSubmit = async () => {
-    console.log(defaultValues)
-    console.log()
     navigate('/', { replace: true });
+    setLoading(false)
   };
 
   const [values, setValues] = useState({
@@ -80,9 +80,9 @@ export default function LoginForm() {
   const dispatch = useDispatch();
 
   const loginUser = () => {
+    setLoading(true)
     const data = { 'email': email, 'password': values.password }
-    dispatch(login(data))
-    
+    dispatch(login(data))    
     
   }
 
@@ -94,16 +94,22 @@ export default function LoginForm() {
   useEffect(() => {
     if(isError){
       setOpen(true)
+      setLoading(false)
     
   }
   if(state === 'yay'){
+    setLoading(true)
+    dispatch(loadUser())
     navigate('/dashboard/app', { replace: true });
+    setLoading(false)
   }
   return()=>{
     setTimeout(() => {            
         dispatch(userCleanUp())
+        setLoading(false)
     }, 1000);
   }
+
 
   }
     , [isError,state])
@@ -172,7 +178,7 @@ export default function LoginForm() {
         </Stack> */}
 
         <LoadingButton fullWidth size="large" sx={{ mt: 3 }} type="submit" variant="contained" onClick={loginUser} loading={isSubmitting}>
-          Login
+         {loading ? "Loading" : "Login"}
         </LoadingButton>
       </FormProvider>
     );

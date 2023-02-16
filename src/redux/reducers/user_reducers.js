@@ -7,9 +7,11 @@ const initialState = {
     state : null,
     error : false,
     errorMessage : [],
-    isLoading: false,
+    isLoading: true,
     user: null,
     token: getCookie("token"),
+    deninePermission : false,
+    deninePermissionMessage : []
 }
 
 export const UserReducer = (state = initialState, {type, payload}={}) => {
@@ -49,6 +51,7 @@ export const UserReducer = (state = initialState, {type, payload}={}) => {
                 error : false,
                 errorMessage : [],
             }
+        
         default:
             return state;
     }

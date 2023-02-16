@@ -23,6 +23,9 @@ import AboutUs from './pages/about_us/AboutUs';
 import PrivacyPolicy from './pages/privacy_policy/PrivacyPolicy';
 import SiteSetting from './pages/site_setting/SiteSetting';
 import { getCookie } from './cookies/cookie';
+import Profile from './pages/profile/Profile';
+import TermAndCondition from './pages/terms_and_conditions/terms_and_conditions';
+import Customer from './pages/Customer';
 
 // ----------------------------------------------------------------------
 
@@ -50,7 +53,10 @@ export default function Router() {
         { path: 'app', element: <DashboardApp /> },
         { path: 'user', element: <User /> },       
         { path: 'aboutus', element: <AboutUs /> },
+        { path: 'customers', element: <Customer /> },
+        { path: 'profile', element: <Profile /> },
         { path: 'privacy_policy', element: <PrivacyPolicy /> },
+        { path: 'terms_and_conditions', element: <TermAndCondition /> },
         { path: 'products', element: <ProductLists/>},
         { path: 'products/:productId', element: <EditProduct/>},
         { path: 'brand', element: <Store/>},

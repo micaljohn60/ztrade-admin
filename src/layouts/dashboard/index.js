@@ -6,6 +6,7 @@ import { styled } from '@mui/material/styles';
 import DashboardNavbar from './DashboardNavbar';
 import DashboardSidebar from './DashboardSidebar';
 import { useDispatch } from 'react-redux';
+import { loadUser } from 'src/redux/actions/user_actions';
 
 // ----------------------------------------------------------------------
 
@@ -36,9 +37,7 @@ const MainStyle = styled('div')(({ theme }) => ({
 export default function DashboardLayout() {
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
-  useEffect(()=>{
-    console.log("dashboard")
-  },[])
+
 
   return (
     <RootStyle>

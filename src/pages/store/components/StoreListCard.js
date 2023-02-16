@@ -9,7 +9,7 @@ import Typography from '@mui/material/Typography';
 import StoreDeleteDialog from './StoreDeleteDialog';
 import StoreEditDialog from './StoreEditDialog';
 
-export default function StoreListCard({ data }) {
+export default function StoreListCard({ data, storeDeletePermission, storeEditPermission }) {
     const { brand_name, image } = data;
     return (
         <Card sx={{ width: 300, border: 1, borderColor: "#000", m: 1,ml:3 }} >
@@ -27,8 +27,19 @@ export default function StoreListCard({ data }) {
                     {brand_name}
                 </Typography>
                 <Box display="flex" justifyContent="end" alignItems="center">
-                    <StoreDeleteDialog storeName={brand_name} storeId={data.id} />
-                    <StoreEditDialog storeName={brand_name} storeId={data.id} />
+                    {
+                        storeDeletePermission ?
+                        <StoreDeleteDialog storeName={brand_name} storeId={data.id} />
+                        :
+                        ""
+                        
+                    }
+                    {
+                        storeEditPermission ?
+                        <StoreEditDialog storeName={brand_name} storeId={data.id} />
+                        :
+                        ""
+                    }
                 </Box>
             </CardContent>
 

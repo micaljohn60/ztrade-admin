@@ -4,7 +4,9 @@ const sliderInitialState ={
     loading : true,
     sliders: [],
     error : false,
-    errorMessage : []
+    errorMessage : [],
+    deninePermission : false,
+    deninePermissionMessage : []
 }
 
 export const SliderReducer = (state = sliderInitialState,{type,payload}={})=>{
@@ -21,6 +23,12 @@ export const SliderReducer = (state = sliderInitialState,{type,payload}={})=>{
                 loading : false,
                 error : true,
                 errorMessage : payload
+            }
+        case ActionTypes.SLIDER_PERMISSION_DENINE:
+            return{
+                loading : false,
+                deninePermission : true,
+                error : false,
             }
             case ActionTypes.SLIDER_CLEAN_UP:
                 return {

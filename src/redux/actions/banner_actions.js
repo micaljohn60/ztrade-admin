@@ -1,18 +1,21 @@
+import { getCookie } from "src/cookies/cookie";
 import ztrade_api from "../../api/ztrade_api";
 import { ActionTypes } from "./types";
 
 export const fetchBanners = () => async (dispatch) => {
-    const response = await ztrade_api.get("api/banner/list")
+    const response = await ztrade_api.get("api/banner/list",tokenConfig(getCookie("token")))
     .then(res=>{
       dispatch({type:ActionTypes.FETCH_BANNERS,payload:res.data   })
     }).catch(err=>{
-      dispatch({type:ActionTypes.FETCH_BANNERS,payload:[]  })
+      if(err.response.status == 403){
+        dispatch({type:ActionTypes.BANNER_PERMISSION_DENINE,payload:[]  })
+      }
     });    
 }
 
 
 export const deleteBanner  = (id) => async (dispatch) =>{
-  const response = await ztrade_api.delete(`api/banner/delete/${id}`).then(
+  const response = await ztrade_api.delete(`api/banner/delete/${id}`,tokenConfig(getCookie("token"))).then(
     res=>{
    
       if(res.status === 201){
@@ -31,7 +34,7 @@ export const deleteBanner  = (id) => async (dispatch) =>{
 export const addBanner = (data) => async (dispatch) =>{
 
   
-    const response = await ztrade_api.post("api/banner/create",data).then(
+    const response = await ztrade_api.post("api/banner/create",data,tokenConfig(getCookie("token"))).then(
       res=>{
      
         if(res.status === 201){
@@ -56,7 +59,7 @@ export const addBanner = (data) => async (dispatch) =>{
 export const updateBanner = (data,id) => async (dispatch) =>{
 
   
-  const response = await ztrade_api.post(`api/banner/update/${id}`,data,tokenConfigFile()).then(
+  const response = await ztrade_api.post(`api/banner/update/${id}`,data,tokenConfig(getCookie("token"))).then(
     res=>{
    
       if(res.status === 201){
@@ -82,17 +85,19 @@ export const bannerCleanUp = () => (dispatch) =>{
   dispatch({type:ActionTypes.BANNER_CLEAN_UP,payload: ""})
 }
 
-export const tokenConfigFile =() =>{
+export const tokenConfig =(token) =>{
  
-  // const userToken = JSON.parse(token)
+  const userToken = JSON.parse(token)
   const config = {
       headers: {
         "Content-Type": "multipart/form-data",
+        "Accept" : "application/json"
       },
     };
-  // if(userToken) {
-  //     config.headers['Authorization'] = `Bearer ${userToken}`;
-  // }
+  if(userToken) {
+    
+      config.headers['Authorization'] = `Bearer ${userToken}`;
+  }
 
   return config;
 }

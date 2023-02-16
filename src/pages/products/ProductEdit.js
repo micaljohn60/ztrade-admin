@@ -61,13 +61,16 @@ export default function EditProduct() {
     const [deleteProductImageListId, setDeleteImageProductlistId] = useState([]);
     const [count, setCount] = useState(0);
     const [skillInputFields, setSkillInputFields] = useState([{ id: uuidv4(), skillName: '' }])
-    const [confirmLoading,setConfirmLoading] = useState(false);
-    const [newArrival,setNewArrival] = useState(false);
-    const [mostPopular,setMostPopular] = useState(false);
-    const [topSellingProduct,setTopSellingProduct] = useState(false);
-    const [newArrivalString,setNewArrivalString] = useState('0');
-    const [mostPopularString,setMostPopularString] = useState('0');
-    const [topSellingProductString,setTopSellingProductString] = useState('0');
+    const [confirmLoading, setConfirmLoading] = useState(false);
+    const [newArrival, setNewArrival] = useState(false);
+    const [mostPopular, setMostPopular] = useState(false);
+    const [topSellingProduct, setTopSellingProduct] = useState(false);
+    const [newArrivalString, setNewArrivalString] = useState('0');
+    const [mostPopularString, setMostPopularString] = useState('0');
+    const [topSellingProductString, setTopSellingProductString] = useState('0');
+
+    const [subCategories, setSubCategories] = useState([]);
+    const [subCategory, setSubCategory] = useState('');
 
     const onDrop = useCallback((acceptedFiles) => {
         acceptedFiles.map((file) => {
@@ -111,16 +114,27 @@ export default function EditProduct() {
         setStoreId(event.target.value);
     };
 
+    const handleSubChange = (event, value) => {
+        setSubCategories(value.sub_category)
+    
+      };
+    
+      const handleSubCategoryChange = (event) => {
+        setSubCategory(event.target.value);
+      };
+
+    
+
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        
+
         const formData = new FormData();
-        
-        if(deleteProductImageListId.length === product.data.product_image.length && images.length <= 0){
+
+        if (deleteProductImageListId.length === product.data.product_image.length && images.length <= 0) {
             alert("You Need at least one image to update")
         }
-        else{
+        else {
             setConfirmLoading(true)
             for (let i = 0; i < images.length; i += 1) {
                 formData.append(`thumbnails${i}`, images[i]);
@@ -134,12 +148,13 @@ export default function EditProduct() {
             formData.append('percentage_id', 1);
             formData.append('store_id', radioValue === 'none' ? 0 : storeId);
             formData.append('image_list', images.length)
-            formData.append('new_arrival',newArrivalString);
-            formData.append('most_popular',mostPopularString);
-            formData.append('top_selling',topSellingProductString);
+            formData.append('subcategory_id', subCategory);
+            formData.append('new_arrival', newArrivalString);
+            formData.append('most_popular', mostPopularString);
+            formData.append('top_selling', topSellingProductString);
             dispatch(updateProduct(productId, formData))
         }
-       
+
 
         // console.log(deleteProductImageListId)
 
@@ -153,7 +168,7 @@ export default function EditProduct() {
         //     "store_id": storeId
         // }
         // dispatch(addProduct(formData))
-      
+
         // console.log(formData.get('thumbnails0'))
         // console.log(formData.get('thumbnails1'))
 
@@ -182,44 +197,44 @@ export default function EditProduct() {
         setOpen(false);
     };
 
-    const _handleNewArrival = ()=>{
-        if(!newArrival){
-          setNewArrival(true)
-          setNewArrivalString('1')
+    const _handleNewArrival = () => {
+        if (!newArrival) {
+            setNewArrival(true)
+            setNewArrivalString('1')
         }
-        else{
-          setNewArrival(false)
-          setNewArrivalString('0')
+        else {
+            setNewArrival(false)
+            setNewArrivalString('0')
         }
-      }
-    
-      const _handleTopSellingProduct = ()=>{
-        if(!topSellingProduct){
-          setTopSellingProduct(true)
-          setTopSellingProductString('1')
+    }
+
+    const _handleTopSellingProduct = () => {
+        if (!topSellingProduct) {
+            setTopSellingProduct(true)
+            setTopSellingProductString('1')
         }
-        else{
-          setTopSellingProduct(false)
-          setTopSellingProductString('0')
+        else {
+            setTopSellingProduct(false)
+            setTopSellingProductString('0')
         }
-      }
-    
-      const _handleMostPopular = ()=>{
-        if(!mostPopular){
-          setMostPopular(true)
-          setMostPopularString('1')
+    }
+
+    const _handleMostPopular = () => {
+        if (!mostPopular) {
+            setMostPopular(true)
+            setMostPopularString('1')
         }
-        else{
-          setMostPopular(false)
-          setMostPopularString('0')
+        else {
+            setMostPopular(false)
+            setMostPopularString('0')
         }
-      }
+    }
 
     useEffect(() => {
         dispatch(fetchCategories())
         dispatch(fetchStores())
         dispatch(fetchSingleProducts(productId));
-        
+
 
         if (isError) {
             setConfirmLoading(false)
@@ -231,10 +246,10 @@ export default function EditProduct() {
         //         dispatch(productCleanUp())
         //     }, 1000);
         // }
-        if(!productLoading){
+        if (!productLoading) {
             setNewArrival(product.data.new_arrival === '0' ? 0 : 1)
             setMostPopular(product.data.most_popular === '0' ? 0 : 1)
-            setTopSellingProduct(product.data.top_selling  === '0' ? 0 : 1)
+            setTopSellingProduct(product.data.top_selling === '0' ? 0 : 1)
             setRadioValue(product.data.store === null ? "none" : "yes")
             setStoreId(product.data.store === null ? 0 : product.data.store.id)
         }
@@ -245,22 +260,22 @@ export default function EditProduct() {
         // }
 
 
-    }, [product && product.status,isError])
+    }, [product && product.status, isError])
 
     return (
         <Page title="Create New Product">
             {
                 productLoading ?
-                    <Loading/>
+                    <Loading />
                     :
-                    
+
                     <Container>
                         {
-                                message.length > 0 ?
+                            message.length > 0 ?
                                 <Alert severity="success">{message}</Alert>
                                 :
                                 ""
-                            }
+                        }
                         <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
 
                             {
@@ -284,7 +299,7 @@ export default function EditProduct() {
                                     ""
                             }
 
-                            
+
 
 
                             <Typography variant="h4" gutterBottom color="#1B458D">
@@ -292,17 +307,17 @@ export default function EditProduct() {
                             </Typography>
                             {
                                 confirmLoading ?
-                                <CircularProgress/>
-                                :
-                                <Button
-                                variant="contained"
+                                    <CircularProgress />
+                                    :
+                                    <Button
+                                        variant="contained"
 
-                                onClick={handleSubmit}
+                                        onClick={handleSubmit}
 
-                                startIcon={<Iconify icon="eva:plus-fill" />}
-                            >
-                                Confirm
-                            </Button>
+                                        startIcon={<Iconify icon="eva:plus-fill" />}
+                                    >
+                                        Confirm
+                                    </Button>
                             }
                         </Stack>
 
@@ -381,6 +396,25 @@ export default function EditProduct() {
                                         sx={{ m: 2 }}
                                     >
                                         {categories.map((option) => (
+                                            <MenuItem key={option.id} value={option.id} onClick={e => handleSubChange(e, option)}>
+                                                {option.name}
+                                            </MenuItem>
+                                        ))}
+                                    </TextField>
+
+                                    <TextField
+                                        id="outlined-select-currency"
+                                        select
+                                        label="Select"
+                                        value={subCategory}
+                                        onChange={handleSubCategoryChange}
+                                        helperText="Please select a Product Sub category"
+                                        sx={{ m: 2 }}
+                                    >
+                                        <MenuItem value="None">
+                                            None
+                                        </MenuItem>
+                                        {subCategories.map((option) => (
                                             <MenuItem key={option.id} value={option.id}>
                                                 {option.name}
                                             </MenuItem>
@@ -395,7 +429,7 @@ export default function EditProduct() {
                                         Previously Selected Category : {product.data.category.name}
                                     </Typography>
 
-                                    <div  style={{borderLeft: "3px solid #1B458D",height: "30px",marginLeft : "5px", marginRight:"5px"}}/>
+                                    <div style={{ borderLeft: "3px solid #1B458D", height: "30px", marginLeft: "5px", marginRight: "5px" }} />
 
                                     <Typography variant="subtitle2" gutterBottom>
                                         Previously Selected Sub Category : {product.data.sub_category === null ? "None" : product.data.sub_category.name}
@@ -404,16 +438,16 @@ export default function EditProduct() {
 
                                 <Box display="flex" justifyContent="center" alignItems="center">
                                     <Typography variant="subtitle2" gutterBottom>
-                                       New Arrival : {product.data.new_arrival === '0' ? "No" : "Yes"}
+                                        New Arrival : {product.data.new_arrival === '0' ? "No" : "Yes"}
                                     </Typography>
 
-                                    <div  style={{borderLeft: "3px solid #1B458D",height: "30px",marginLeft : "5px", marginRight:"5px"}}/>
+                                    <div style={{ borderLeft: "3px solid #1B458D", height: "30px", marginLeft: "5px", marginRight: "5px" }} />
 
                                     <Typography variant="subtitle2" gutterBottom>
                                         Most Popular : {product.data.most_popular === "0" ? "No" : "Yes"}
                                     </Typography>
 
-                                    <div  style={{borderLeft: "3px solid #1B458D",height: "30px",marginLeft : "5px", marginRight:"5px"}}/>
+                                    <div style={{ borderLeft: "3px solid #1B458D", height: "30px", marginLeft: "5px", marginRight: "5px" }} />
 
                                     <Typography variant="subtitle2" gutterBottom>
                                         Top Selling : {product.data.top_selling === '0' ? "No" : "Yes"}
@@ -421,20 +455,20 @@ export default function EditProduct() {
                                 </Box>
 
 
-                                <Box 
+                                <Box
                                     display="flex"
                                     justifyContent="center"
                                     alignItems="center"
-                                    >
-                                    <Checkbox  
-                                                    
+                                >
+                                    <Checkbox
+
                                         checked={newArrival}
                                         onChange={_handleNewArrival}
                                         inputProps={{ 'aria-label': 'controlled' }}
                                     />
                                     <label>New Arrival</label>
                                     <Checkbox
-                                    sx={{ml:4}}
+                                        sx={{ ml: 4 }}
                                         checked={mostPopular}
                                         onChange={_handleMostPopular}
                                         inputProps={{ 'aria-label': 'controlled' }}
@@ -442,15 +476,15 @@ export default function EditProduct() {
                                     <label>Most Popular</label>
 
                                     <Checkbox
-                                    sx={{ml:4}}
+                                        sx={{ ml: 4 }}
                                         checked={topSellingProduct}
                                         onChange={_handleTopSellingProduct}
                                         inputProps={{ 'aria-label': 'controlled' }}
                                     />
                                     <label>Top Selling Product</label>
-                                    </Box>
+                                </Box>
 
-                                
+
 
                                 <Box display="flex" alignItems="center" justifyContent="center">
                                     {/* <Dropzone onDrop={onDrop} accept={"image/*"}/> */}

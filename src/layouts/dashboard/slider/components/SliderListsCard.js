@@ -10,7 +10,7 @@ import Typography from '@mui/material/Typography';
 import SliderDeleteDialog from './SliderDeleteDialog';
 import SliderEditDialog from './SliderEditDialog';
 
-export default function SliderListsCard({ data, stores }) {
+export default function SliderListsCard({ data, stores,editPermission, deletePermission }) {
     const { name, image, store_id} = data;
     return (
         <Card sx={{ width: 250, border: 1, borderColor: "#000", m: 1, ml:3 }} >
@@ -37,10 +37,23 @@ export default function SliderListsCard({ data, stores }) {
                         ?
                         <Chip label={data.store.brand_name} variant="outlined" />
                         :
+                        <Chip label="Home Screen" variant="outlined" />
+                    }
+                    {
+                        deletePermission ? 
+                        <SliderDeleteDialog sliderName={name} sliderId={data.id}/>
+                        :
+                        ""
+
+                    }
+
+                    {
+                        editPermission ?
+                        <SliderEditDialog sliderName={name} sliderId={data.id} stores={stores} storeId={store_id}/>
+                        :
                         ""
                     }
-                    <SliderDeleteDialog sliderName={name} sliderId={data.id}/>
-                    <SliderEditDialog sliderName={name} sliderId={data.id} stores={stores} storeId={store_id}/>
+                    
                 </Box>
                
             </CardContent>

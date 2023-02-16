@@ -3,7 +3,9 @@ import { ActionTypes } from "../actions/types";
 const percentInitialState ={
     loading : true,
     percent: [],
-    error : false
+    error : false,
+    deninePermission : false,
+    deninePermissionMessage : []
 }
 
 export const PercentReducer = (state = percentInitialState,{type,payload}={})=>{

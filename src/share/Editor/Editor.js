@@ -1,7 +1,12 @@
 import { useState } from "react";
+import { useEffect } from 'react';
+import { useQuill } from 'react-quilljs';
 import ReactQuill, { Quill } from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
+import ImageResize from 'quill-image-resize-module-react';
+import BlotFormatter from 'quill-blot-formatter';
 
+Quill.register('modules/imageResize', ImageResize);
 const CustomButton = () => <span className="octicon octicon-star" />;
 
 
@@ -53,21 +58,50 @@ const formats = [
 ];
 
 const modules = {   
+
     toolbar: {
       container: "#toolbar",
     },
     clipboard: {
       matchVisual: false,
     },
+    imageResize: {
+      parchment: Quill.import('parchment'),
+      modules: ['Resize', 'DisplaySize']
+    },
     
   };
 
 export default function Editor({state,value}){
+
+    const { quill, quillRef, Quill } = useQuill({
+      modules: { blotFormatter: {} }
+    });
+
+    if (Quill && !quill) {
+      // const BlotFormatter = require('quill-blot-formatter');
+      Quill.register('modules/blotFormatter', BlotFormatter);
+    }
+
+    useEffect(() => {
+      if (quill) {
+        quill.on('text-change', (delta, oldContents) => {
+          console.log('Text change!');
+          console.log(delta);
+  
+          let currrentContents = quill.getContents();
+          console.log(currrentContents.diff(oldContents));
+        });
+      }
+    }, [quill, Quill]);
     
     const [editorState, setEditorState] = useState(value);
 
     return(
         <>
+        {/* <div>
+          <div ref={quillRef} dangerouslySetInnerHTML={{__html: value}}/>
+        </div> */}
             <CustomToolbar/>
             <ReactQuill theme="snow" value={value} onChange={(e)=>state(e)}  modules={modules} />
         </>

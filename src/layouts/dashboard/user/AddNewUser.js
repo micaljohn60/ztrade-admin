@@ -1,7 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 // material
-import { Container, Stack, Typography, Card, Box, MenuItem, TextField, Button, } from '@mui/material';
+import { Container, Stack, Typography, Card, Box, TextField, Button, FormControl, InputLabel, OutlinedInput, MenuItem } from '@mui/material';
 import IconButton from '@mui/material/IconButton';
 
 // components
@@ -10,6 +10,11 @@ import { styled } from '@mui/material/styles';
 import { v4 as uuidv4 } from 'uuid';
 import Page from '../../../components/Page';
 import Iconify from '../../../components/Iconify';
+import { useDispatch, useSelector } from 'react-redux';
+import { fetchRolesAndPermissions } from 'src/redux/actions/role_and_permissions_actions';
+import Loading from 'src/share/Loading/Loading';
+import { addNewStaff } from 'src/redux/actions/user_actions';
+import PermissionDenied from 'src/share/permission_denied/PermissionDenied';
 
 
 
@@ -40,37 +45,38 @@ const InputData = styled('input')({
 
 export default function AddNewUser() {
 
-    const [role, setRole] = useState('sales and marketing');
     const [userName, setUserName] = useState('');
     const [email, setUserEmail] = useState('');
     const [password, setUserPassword] = useState('');
-
+    const [role, setRole] = useState('');
 
     const [salary, setSalary] = useState('0');
     const [skillInputFields, setSkillInputFields] = useState([{ id: uuidv4(), skillName: '' }])
 
     const [values, setValues] = useState({
-        amount: '',
         password: '',
-        weight: '',
-        weightRange: '',
+        retypepassword : '',
         showPassword: false,
-      });
-    
-      const handleChange = (prop) => (event) => {
+    });
+
+    const handleChange = (prop) => (event) => {
         setValues({ ...values, [prop]: event.target.value });
-      };
-    
-      const handleClickShowPassword = () => {
+    };
+
+    const handleRetypePasswordChange = (prop) => (event) => {
+        setValues({ ...values, [prop]: event.target.value });
+    };
+
+    const handleClickShowPassword = () => {
         setValues({
-          ...values,
-          showPassword: !values.showPassword,
+            ...values,
+            showPassword: !values.showPassword,
         });
-      };
-    
-      const handleMouseDownPassword = (event) => {
+    };
+
+    const handleMouseDownPassword = (event) => {
         event.preventDefault();
-      };
+    };
 
     const handleChangeInput = (id, event) => {
         const newInputField = skillInputFields.map(i => {
@@ -98,101 +104,196 @@ export default function AddNewUser() {
     };
 
 
+    const dispatch = useDispatch();
+
     const handleSubmit = (e) => {
         e.preventDefault()
 
         const data = {
-
+            "name": userName,
+            "email": email,
+            "password": values.password,
+            "factory_name" : "ZTrade",
+            "confirm-password" : values.retypepassword,
+            "roles": role,
+            "profile_pic" : "user_profile.jpg"
         }
-        console.log(data)
+        dispatch(addNewStaff(data))
 
     }
+
+    const staffLoading = useSelector((state) => state.user.isLoading);
+    const staff = useSelector((state) => state.user.user);
+
+    const roleAndPermissions = useSelector((state) => state.roleAndPermissions.roleAndPermission);
+    const isLoading = useSelector((state) => state.roleAndPermissions.loading);
+
+    const [hasUserCreatePermission, setHasUserCreatePermission] = useState(false);
+    const [hasUserEditPermission, setHasUserEditPermission] = useState(false);
+    const [hasUserListPermission, setHasUserListPermission] = useState(false);
+    const [hasUserDeletePermission, setHasUserDeletePermission] = useState(false);
+
+    const setUserPermission = (permissions) => {
+        for (let i = 0; i < permissions.length; i++) {
+          if (permissions[i].name == "user-create") {
+            setHasUserCreatePermission(true)
+          }
+          if (permissions[i].name == "user-edit") {
+            setHasUserEditPermission(true)
+          }
+          if (permissions[i].name == "user-list") {
+            setHasUserListPermission(true)
+          }
+          if (permissions[i].name == "user-delete") {
+            setHasUserDeletePermission(true)
+          }
+    
+    
+        }
+    
+      }
+
+    useEffect(() => {
+        if (!staffLoading) {
+            setUserPermission(staff.permissions)
+          }
+        dispatch(fetchRolesAndPermissions())
+    }, [staff && staff.permissions])
 
     return (
         <Page title="Create New Product">
             <Container>
-                <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
-                    <Typography variant="h4" gutterBottom color="#108992">
-                        Add New User
-                    </Typography>
-                    <Button
-                        variant="contained"
+                {
+                    staffLoading || isLoading ?
+                        <Loading />
+                        :
+                        <>
+                           {
+                            !hasUserCreatePermission ?
+                            <PermissionDenied/>
+                            :
+                            <>
+                             <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
+                                <Typography variant="h4" gutterBottom color="#1B458D">
+                                    Add New User
+                                </Typography>
+                                <Button
+                                    variant="contained"
 
-                        onClick={handleSubmit}
+                                    onClick={handleSubmit}
 
-                        startIcon={<Iconify icon="eva:plus-fill" />}
-                    >
-                        Confirm
-                    </Button>
-                </Stack>
+                                    startIcon={<Iconify icon="eva:plus-fill" />}
+                                >
+                                    Confirm
+                                </Button>
+                            </Stack>
 
-                <Card>
+                            <Card>
 
-                    <Box
+                                <Box
 
-                        component="form"
-                        sx={{
-                            '& > :not(style)': { m: 1, width: '100%' },
-                        }}
-                        noValidate
-                        autoComplete="off"
-                    >
-                        <Box display="flex"
+                                    component="form"
+                                    sx={{
+                                        '& > :not(style)': { m: 1, width: '100%' },
+                                    }}
+                                    noValidate
+                                    autoComplete="off"
+                                >
+                                    <Box display="flex"
 
-                            alignItems="center"
-                            justifyContent="center" >
-                            <TextField id="outlined-basic" onChange={e => setUserName(e.target.value)} label="User Name" variant="outlined" style={{ width: 800 }} sx={{ m: 2 }} error={userName === ""} helperText={userName === "" ? 'Empty field!' : ' '} />
+                                        alignItems="center"
+                                        justifyContent="center" >
+                                        <TextField id="outlined-basic" onChange={e => setUserName(e.target.value)} label="User Name" variant="outlined" style={{ width: 800 }} sx={{ m: 2 }} error={userName === ""} helperText={userName === "" ? 'Empty field!' : ' '} />
 
-                        </Box>
-                        <Box
-                            display="flex"
-                            alignItems="center"
-                            justifyContent="center" >
-                            <TextField id="outlined-basic" onChange={e => setUserEmail(e.target.value)} label="User Email" variant="outlined" style={{ width: 800 }} sx={{ m: 2 }} error={email === ""} helperText={email === "" ? 'Empty field!' : ' '} />
+                                    </Box>
+                                    <Box
+                                        display="flex"
+                                        alignItems="center"
+                                        justifyContent="center" >
+                                        <TextField id="outlined-basic" onChange={e => setUserEmail(e.target.value)} label="User Email" variant="outlined" style={{ width: 800 }} sx={{ m: 2 }} error={email === ""} helperText={email === "" ? 'Empty field!' : ' '} />
 
-                        </Box>
+                                    </Box>
 
-                        <Box display="flex"
+                                    <Box display="flex"
 
-                            alignItems="center"
-                            justifyContent="center" >
-                            <TextField id="outlined-basic" onChange={e => setUserPassword(e.target.value)} label="User Password" variant="outlined" style={{ width: 800 }} sx={{ m: 2 }} error={password === ""} helperText={password === "" ? 'Empty field!' : ' '} />
-
-                        </Box>
-                        <Box display="flex"
-
-                            alignItems="center"
-                            justifyContent="center" >
-                            <TextField id="outlined-basic" onChange={e => setUserPassword(e.target.value)} label="Re-Type Password" variant="outlined" style={{ width: 800 }} sx={{ m: 2 }} error={password === ""} helperText={password === "" ? 'Empty field!' : ' '} />
-
-                        </Box>
-
-                        <Box display="flex"
-                            alignItems="center"
-                            justifyContent="center">
-
-                            <TextField
-                                id="outlined-select-currency"
-                                select
-                                label="Select"
-                                value={role}
-                                onChange={handleRoleChange}
-                                helperText="Please select Role To Assign"
-                                sx={{ m: 2 }}
-                            >
-                                {jobCategories.map((option) => (
-                                    <MenuItem key={option.value} value={option.value}>
-                                        {option.label}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-
-                        </Box>
+                                        alignItems="center"
+                                        justifyContent="center" >
+                                        <FormControl sx={{ m: 1, width: 800 }} variant="outlined">
+                                            <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                                            <OutlinedInput
+                                                id="outlined-adornment-password"
+                                                type={values.showPassword ? 'text' : 'password'}
+                                                value={values.password}
+                                                onChange={handleChange('password')}
+                                                endAdornment={
+                                                  
+                                                        <Button
+                                                            aria-label="toggle password visibility"
+                                                            onClick={handleClickShowPassword}
+                                                            onMouseDown={handleMouseDownPassword}
+                                                            edge="end"
+                                                        >
+                                                            {values.showPassword ? "Off" : "On"}
+                                                        </Button>
+                                                    
+                                                }
+                                                label="Password"
+                                            />
+                                        </FormControl>
 
 
-                    </Box>
+                                    </Box>
+                                    <Box display="flex"
 
-                </Card>
+                                        alignItems="center"
+                                        justifyContent="center" >
+                                        <FormControl sx={{ m: 1, width: 800 }} variant="outlined">
+                                            <InputLabel htmlFor="outlined-adornment-password">Retype Password</InputLabel>
+                                            <OutlinedInput
+                                                id="outlined-adornment-password"
+                                                type={values.showPassword ? 'text' : 'password'}
+                                                value={values.retypepassword}
+                                                onChange={handleChange('retypepassword')}
+                                                label="Retype Password"
+                                            />
+                                        </FormControl>
+
+
+                                    </Box>
+
+
+
+                                    <Box display="flex"
+                                        alignItems="center"
+                                        justifyContent="center">
+
+                                        <TextField
+                                            id="outlined-select-currency"
+                                            select
+                                            label="Select Role"
+                                            value={role}
+                                            onChange={handleRoleChange}
+                                            style={{ width: 800 }}
+                                            helperText="Please select Role To Assign"
+                                            sx={{ m: 2 }}
+                                        >
+                                            {roleAndPermissions.roles.map((option) => (
+                                                <MenuItem key={option.id} value={option.id}>
+                                                    {option.name}
+                                                </MenuItem>
+                                            ))}
+                                        </TextField>
+
+                                    </Box>
+
+
+                                </Box>
+
+                            </Card>
+                            </>
+                           }
+                        </>
+                }
 
 
             </Container>

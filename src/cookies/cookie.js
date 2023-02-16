@@ -23,5 +23,5 @@ export const getCookie =(name) =>{
 }
 
 export const deleteCookie = (name) => {
-  document.cookie =  name + "=; max-age=0;"
+  document.cookie =  name + "=; expires= Thu, 21 Aug 2014 20:00:00 UTC; path=/;"
 }

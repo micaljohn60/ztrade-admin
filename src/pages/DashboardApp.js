@@ -13,6 +13,8 @@ import {
   AppWidgetSummary,
 } from '../sections/@dashboard/app';
 import { fetchProducts } from '../redux/actions/product_actions';
+import { fetchRolesAndPermissions } from 'src/redux/actions/role_and_permissions_actions';
+import { fetchUserCount } from 'src/redux/actions/staff_actions';
 
 // ----------------------------------------------------------------------
 
@@ -21,10 +23,36 @@ export default function DashboardApp() {
   const dispatch = useDispatch();
 
   const [percentage,setPercentage] = useState(null);
-  const products = useSelector((state) => state.product.products);
+  const products = useSelector((state) => state.product.length);
   const percent = useSelector((state) => state.percent.percent);
   const percentLoading = useSelector((state) => state.percent.loading);
   const [addLoading,setAddLoading] = useState(false);
+
+
+  const [hasPercentEditPermission, setHasPercentEditPermission] = useState(false);
+  const [haPercentListPermission, setHasPercentListPermission] = useState(false);
+
+  const staffLoading = useSelector((state) => state.user.isLoading);
+  const staff = useSelector((state) => state.user.user);
+  const userLoading = useSelector((state) => state.staff.loading);
+  const userCount = useSelector((state) => state.staff.count);
+
+  const setUserPermission = (permissions) => {
+    for (let i = 0; i < permissions.length; i++) {
+
+      if (permissions[i].name == "percent-edit") {
+        setHasPercentEditPermission(true)
+      }
+      if (permissions[i].name == "percent-list") {
+        setHasPercentListPermission(true)
+      }
+}
+
+
+    }
+
+  
+
 
   
   const handlePercentage = () =>{
@@ -45,35 +73,51 @@ export default function DashboardApp() {
     dispatch(fetchPercent())
     dispatch(fetchProducts())
     dispatch(fetchPercent())
-  },[])
+    dispatch(fetchRolesAndPermissions())
+    
+    if (!staffLoading) {
+      console.log(staff.permissions)
+      setUserPermission(staff.permissions)
+    }
+  },[staff && staff.permissions])
 
   return (
     <Page title="Dashboard">
-      <Container maxWidth="xl">
+      {staffLoading || userLoading?
+      
+    "Loading"
+    :
+    <Container maxWidth="xl">
         <Typography variant="h4" sx={{ mb: 5 }}>
           Hi, Welcome back
         </Typography>
 
         <Grid container spacing={3}>
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Invetory" total={products.length} icon={'fa-solid:store'} />
+            <AppWidgetSummary title="Invetory" total={products} icon={'fa-solid:store'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Users" total={10} color="info" icon={'bx:user-circle'} />
+            <AppWidgetSummary title="Users/Staffs" total={userCount.staffs} color="info" icon={'bx:user-circle'} />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
             <AppWidgetSummary title="Percentage" total={percentLoading ? '0' : percent.data.percentage} color="warning" icon={'ant-design:percentage-outlined'} />
           </Grid>
 
-          {/* <Grid item xs={12} sm={6} md={3}>
-            <AppWidgetSummary title="Bug Reports" total={234} color="error" icon={'ant-design:bug-filled'} />
-          </Grid> */}
+          <Grid item xs={12} sm={6} md={3}>
+            <AppWidgetSummary title="Customers" total={userCount.user} color="info" icon={'mdi:user-group'} />
+          </Grid>
 
           
         </Grid>
-        <Typography variant="h4" sx={{ mb: 5, mt:5 }} >
+
+        {
+          !hasPercentEditPermission ?
+          ""
+          :
+          <>
+          <Typography variant="h4" sx={{ mb: 5, mt:5 }} >
           Add Your Percentage
         </Typography>
 
@@ -94,8 +138,12 @@ export default function DashboardApp() {
           
 
         </Grid>
+          </>
+        }
+        
         
       </Container>
+      }
     </Page>
   );
 }

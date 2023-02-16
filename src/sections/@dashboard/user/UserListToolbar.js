@@ -71,7 +71,7 @@ export default function UserListToolbar({ numSelected, filterName, onFilterName 
       ) : (
         <Tooltip title="Filter list">
           <IconButton>
-            <Iconify icon="ic:round-filter-list" />
+            {/* <Iconify icon="ic:round-filter-list" /> */}
           </IconButton>
         </Tooltip>
       )}

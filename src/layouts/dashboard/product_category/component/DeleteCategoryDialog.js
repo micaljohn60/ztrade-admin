@@ -16,7 +16,7 @@ const Input = styled('input')({
 });
 
 
-export default function DeleteCategoryDialog({ categoryName, categoryId, isCategory,categories }) {
+export default function DeleteCategoryDialog({ categoryImage, categoryName, categoryId, isCategory, categories, categoryUpdatePermission, categoryDeletePermission }) {
   const [open, setOpen] = useState(false);
   const [name, setName] = useState(null);
   const [newImage, setNewImage] = useState(null);
@@ -34,7 +34,7 @@ export default function DeleteCategoryDialog({ categoryName, categoryId, isCateg
 
   const handleSelectChange = (event) => {
     setNewCategoryId(event.target.value);
-};
+  };
 
   const handleClose = () => {
     setOpen(false);
@@ -110,6 +110,21 @@ export default function DeleteCategoryDialog({ categoryName, categoryId, isCateg
             {
               isCategory ?
                 <>
+
+
+<Grid container justifyContent="center" alignItems="center">
+                     <Box
+                        component="div"
+                      >
+                        <CardMedia
+                          component="img"
+                          sx={{ width: 151 }}
+                          image={process.env.REACT_APP_PRODUCTION_PORT + "storage/category_image/"+ categoryImage}
+                          alt="category_image"
+                        />
+                      </Box>
+                    
+                  </Grid>
                   <Grid item sx={{ m: "3%" }}>
                     <label htmlFor="contained-button-file-1">
                       <Input accept="image/*" id="contained-button-file-1" multiple type="file" onChange={(e) => setNewImage(e.target.files[0])} />
@@ -119,6 +134,8 @@ export default function DeleteCategoryDialog({ categoryName, categoryId, isCateg
                       {/* <Button variant="outlined" disabled /> */}
                     </label>
                   </Grid>
+                  
+                  
 
                   <Grid container justifyContent="center" alignItems="center">
                     {
@@ -161,9 +178,14 @@ export default function DeleteCategoryDialog({ categoryName, categoryId, isCateg
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancle</Button>
-          <Button onClick={handleUpdate} autoFocus>
-            Update
-          </Button>
+          {
+            categoryUpdatePermission ?
+              <Button onClick={handleUpdate} autoFocus>
+                Update
+              </Button>
+              :
+              ""
+          }
         </DialogActions>
 
 
@@ -177,9 +199,14 @@ export default function DeleteCategoryDialog({ categoryName, categoryId, isCateg
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancle</Button>
-          <Button onClick={handleDelete} autoFocus>
-            Yes
-          </Button>
+          {
+            categoryDeletePermission ?
+              <Button onClick={handleDelete} autoFocus>
+                Yes
+              </Button>
+              :
+              ""
+          }
         </DialogActions>
       </Dialog>
     </div>

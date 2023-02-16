@@ -5,7 +5,9 @@ const bannerInitialState ={
     banners: [],
     banner : [],    
     error : false,
-    errorMessage : []
+    errorMessage : [],
+    deninePermission : false,
+    deninePermissionMessage : []
 }
 
 export const BannerReducer = (state = bannerInitialState,{type,payload}={})=>{
@@ -22,6 +24,13 @@ export const BannerReducer = (state = bannerInitialState,{type,payload}={})=>{
                 loading : false,
                 error : true,
                 errorMessage : payload
+            }
+        case ActionTypes.BANNER_PERMISSION_DENINE:
+            return {
+                ... state,
+                loading : false,
+                deninePermission : true,
+                banners : []
             }
         case ActionTypes.BANNER_CLEAN_UP:
             return {

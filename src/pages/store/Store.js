@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Grid, Container, Stack, Typography, Card, Box, TextField, Button, MenuItem, CardMedia,Snackbar } from '@mui/material';
+import { Grid, Container, Stack, Typography, Card, Box, TextField, Button, MenuItem, CardMedia, Snackbar,Alert } from '@mui/material';
 import { useState, useEffect } from 'react';
 import MuiAlert from '@mui/material/Alert';
 import { useDispatch, useSelector } from 'react-redux';
@@ -14,8 +14,10 @@ import Page from '../../components/Page';
 import Iconify from '../../components/Iconify';
 import StoreList from './components/StoreList';
 
-import { addStore,fetchStores, storeCleanUP } from '../../redux/actions/store_actions';
+import { addStore, fetchStores, storeCleanUP } from '../../redux/actions/store_actions';
 import StoreListCard from './components/StoreListCard';
+import Loading from 'src/share/Loading/Loading';
+import PermissionDenied from 'src/share/permission_denied/PermissionDenied';
 
 
 
@@ -26,25 +28,6 @@ const Input = styled('input')({
 const CustomAlert = React.forwardRef((props, ref) => {
     return <MuiAlert elevation={6} ref={ref} variant="filled" {...props} />;
 });
-
-const jobCategories = [
-    {
-        value: 'electronic',
-        label: 'Electronic',
-    },
-    {
-        value: 'fashion',
-        label: 'Fashion',
-    },
-    {
-        value: 'health care',
-        label: 'Health Care',
-    },
-    {
-        value: 'household_and_kitchen',
-        label: 'Household & Kitchen',
-    },
-];
 
 export default function Store() {
     const [open, setOpen] = useState(false);
@@ -59,6 +42,16 @@ export default function Store() {
     const loading = useSelector((state) => state.store.loading);
     const storeError = useSelector((state) => state.store.errorMessage);
     const isError = useSelector((state) => state.store.error);
+    const storePermissionDenied = useSelector((state) => state.store.deninePermission);
+
+    const [hasStoreCreatePermission, setHasStoreCreatePermission] = useState(false);
+    
+    const [hasStoreEditPermission, setHasStoreEditPermission] = useState(false);
+    const [hasStoreUpdatePermission, setHasStoreUpdatePermission] = useState(false);
+    const [hasStoreDeletePermission, setHasStoreDeletePermission] = useState(false);
+
+    const staffLoading = useSelector((state) => state.user.isLoading);
+    const staff = useSelector((state) => state.user.user);
 
     const handleClick = (e) => {
         const formData = new FormData();
@@ -83,43 +76,73 @@ export default function Store() {
         setOpen(false);
     };
 
+    const setStorePermission = (permissions) => {
+        for (let i = 0; i < permissions.length; i++) {
+
+            if (permissions[i].name == "brand-create") {
+                setHasStoreCreatePermission(true)                
+            }
+            if(permissions[i].name == "brand-edit"){
+                setHasStoreEditPermission(true)
+            }
+            if(permissions[i].name == "brand-delete"){
+                setHasStoreDeletePermission(true)
+            }
+        }
+
+    }
+
     useEffect(() => {
         dispatch(fetchStores())
-        if(isError){
+        if (isError) {
             setOpen(true)
         }
+
         
-        return()=>{
-            setTimeout(() => {            
+        if (!staffLoading) {
+            setStorePermission(staff.permissions)
+        }
+
+        return () => {
+            setTimeout(() => {
                 dispatch(storeCleanUP())
             }, 1000);
-            
+
         }
-    }, [isError])
+    }, [staff && staff.permissions, isError])
 
     return (
         <>
             <Page title="Brands">
-                <Container>
+                {
+                    staffLoading ?
+                    <Loading/>
+                    :
+                    <>
+                    {
+                        !hasStoreCreatePermission  ?
+                        <PermissionDenied/>
+                        :
+                        <Container>
                     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
 
-                    {
-                        isError ?
-                            <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
-                                <CustomAlert onClose={handleClose} severity="error" sx={{ width: '100%', }}>
-                                    {storeError.errors.name} &nbsp;
-                                    {storeError.errors.image}
-                                    {
-                                    storeError.errors.category_id ?
-                                    "Please Select a category"
-                                    :
-                                    ""
-                                    }
-                                </CustomAlert>
-                            </Snackbar>
-                            :
-                            ""
-                    }
+                        {
+                            isError ?
+                                <Snackbar open={open} autoHideDuration={3000} onClose={handleClose}>
+                                    <CustomAlert onClose={handleClose} severity="error" sx={{ width: '100%', }}>
+                                        {storeError.errors.name} &nbsp;
+                                        {storeError.errors.image}
+                                        {
+                                            storeError.errors.category_id ?
+                                                "Please Select a category"
+                                                :
+                                                ""
+                                        }
+                                    </CustomAlert>
+                                </Snackbar>
+                                :
+                                ""
+                        }
                         <Typography variant="h4" gutterBottom color="#1B458D">
                             Create Brand
                         </Typography>
@@ -170,7 +193,7 @@ export default function Store() {
                                                     direction="row"
                                                     justifyContent="center"
                                                     alignItems="center"
-                                                    sx={{mt:1}}
+                                                    sx={{ mt: 1 }}
                                                 >
 
                                                     <label htmlFor="contained-button-file" className="mb-2">
@@ -212,28 +235,39 @@ export default function Store() {
                         </Box>
                     </Card>
                     {
-                        loading ? 
-                        "Loading"
-                        :
-                        <Grid sx={{ flexGrow: 1, mt: 5 }} container spacing={1}>
-                        {    
-                            stores.length === 0 ?
-                            "No Brands Here"
+                        storePermissionDenied ?
+                        <Alert severity="error">You don't have permission to view.</Alert>
                             :
-                            <Grid container justifyContent="start" spacing={1}>
+                            <>
                                 {
-                                    
-                                    stores.map((store) => (
-                                        <StoreListCard data={store} />
-                                       
-                                    ))
+                                    loading ?
+                                        "Loading"
+                                        :
+                                        <Grid sx={{ flexGrow: 1, mt: 5 }} container spacing={1}>
+                                            {
+                                                stores.length === 0 ?
+                                                    "No Brands Here"
+                                                    :
+                                                    <Grid container justifyContent="start" spacing={1}>
+                                                        {
+
+                                                            stores.map((store) => (
+                                                                <StoreListCard data={store} storeDeletePermission={hasStoreDeletePermission} storeEditPermission={hasStoreEditPermission} />
+
+                                                            ))
+                                                        }
+                                                    </Grid>
+                                            }
+                                        </Grid>
                                 }
-                            </Grid>
-                        }
-                        </Grid>
+                            </>
                     }
 
+
                 </Container>
+                    }
+                    </>
+                }
 
             </Page>
         </>

@@ -23,7 +23,7 @@ export default function EcommerceShop() {
   return (
     <Page title="Dashboard: Products">
       <Container>
-        <Typography variant="h4" sx={{ mb: 5 }}>
+        <Typography variant="h4" sx={{ mb: 5 }} color="#1B458D">
           Products
         </Typography>
 
