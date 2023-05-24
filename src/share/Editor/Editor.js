@@ -21,13 +21,22 @@ const CustomToolbar = () => (
       </select>
       <button className="ql-bold" />     
       <button className="ql-italic" />
-      <button className="ql-image" />
+      {/* <button className="ql-image" /> */}
       <button className="ql-list" value="ordered"> 
       <i className="fa fa-list" aria-hidden="true"/>
       </button>
       <button className="ql-list" value="bullet">
         <i className="fa fa-list-ol" aria-hidden="true"/>
       </button>
+      {/* <button className="ql-align" value="bullet">
+        <i className="fa fa-list-ol" aria-hidden="true"/>
+      </button> */}
+      <span class="ql-formats">
+    <button class="ql-align" value=""></button>
+    <button class="ql-align" value="center"></button>
+    <button class="ql-align" value="right"></button>
+    <button class="ql-align" value="justify"></button>
+  </span>
       <select className="ql-color">
         <option value="red" />
         <option value="green" />
@@ -51,6 +60,7 @@ const formats = [
   'blockquote',
   'list',
   'bullet',
+  'align',
   'indent',
   'link',
   'image',

@@ -18,7 +18,7 @@ export const addNewStaff = (data) => async (dispatch) =>{
       alert("One Of your fields are mission data")
     }
     else{
-      alert(err)
+      alert("Error : Please Reload")
     }
     
   })
@@ -56,7 +56,7 @@ export const loadUser = () => async (dispatch)=>{
     })
   }).catch(err =>{
     
-    console.log("User Loaded Error");
+    // console.log("User Loaded Error");
     // console.log(err.response.data)
   })
 }

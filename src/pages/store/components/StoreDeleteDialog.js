@@ -52,7 +52,7 @@ export default function StoreDeleteDialog({storeName,storeId,}) {
             </DialogContentText>
             </DialogContent>
             <DialogActions>
-            <Button onClick={handleClose}>Cancle</Button>
+            <Button onClick={handleClose}>Cancel</Button>
             <Button onClick={handleDelete} autoFocus>
                 Yes
             </Button>

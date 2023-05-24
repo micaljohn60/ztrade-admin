@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import htmlToDraft from 'html-to-draftjs';
 import Editor from "../../share/Editor/Editor";
 import { getPrivicyPolicy, updatePrivacyPolicy } from "src/redux/actions/about_us_action";
+import Page from "src/components/Page";
 
 export default function PrivacyPolicy() {
 
@@ -60,7 +61,7 @@ export default function PrivacyPolicy() {
     }, [aboutus && aboutus.id, isError])
 
     return (
-        <>
+        <Page title="Privacy Policy">
             {
                 message.length > 0 ?
                     <Alert severity="success">{message}</Alert>
@@ -119,6 +120,6 @@ export default function PrivacyPolicy() {
                     </>
             }
 
-        </>
+        </Page>
     )
 }

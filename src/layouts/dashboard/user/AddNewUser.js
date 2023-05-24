@@ -161,7 +161,7 @@ export default function AddNewUser() {
     }, [staff && staff.permissions])
 
     return (
-        <Page title="Create New Product">
+        <Page title="Add New User">
             <Container>
                 {
                     staffLoading || isLoading ?

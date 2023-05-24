@@ -140,14 +140,17 @@ export default function BannerManagement() {
                                             {
                                                 confirmLoading ?
                                                     "Loading" :
-                                                    <Button
-                                                        variant="contained"
+                                                banners.length == 4 ?
+                                                "You have exceed maximun number of banner limit (only 4 are allowed) "
+                                                :
+                                                <Button
+                                                variant="contained"
 
-                                                        onClick={handleClick}
-                                                        startIcon={<Iconify icon="eva:plus-fill" />}
-                                                    >
-                                                        Confirm
-                                                    </Button>
+                                                onClick={handleClick}
+                                                startIcon={<Iconify icon="eva:plus-fill" />}
+                                            >
+                                                Confirm
+                                            </Button>
                                             }
                                         </Stack>
 

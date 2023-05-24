@@ -80,7 +80,7 @@ export default function StoreEditDialog({ storeName, storeId }) {
               alignItems="center"
               justifyContent="center"
             >
-              <TextField id="outlined-basic" label="Set New Name" variant="outlined" onChange={(e) => setNewName(e.target.value)} />
+              <TextField id="outlined-basic" inputProps={{ maxLength: 20 }} label="Set New Name" variant="outlined" onChange={(e) => setNewName(e.target.value)} />
 
               <label htmlFor="contained-button-file-1" className="mb-2">
                 <Input accept="image/*" id="contained-button-file-1" multiple type="file" onChange={e => setImage(e.target.files[0])} />
@@ -119,7 +119,7 @@ export default function StoreEditDialog({ storeName, storeId }) {
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancle</Button>
+          <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={updateAction} autoFocus>
             Yes
           </Button>

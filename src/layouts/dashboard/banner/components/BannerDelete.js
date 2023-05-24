@@ -54,7 +54,7 @@ export default function BannerDelete({bannerName,bannerId,state}) {
             </DialogContentText>
             </DialogContent>
             <DialogActions>
-            <Button onClick={handleClose}>Cancle</Button>
+            <Button onClick={handleClose}>Cancel</Button>
             
               <Button onClick={handleDelete} autoFocus>
                 Yes

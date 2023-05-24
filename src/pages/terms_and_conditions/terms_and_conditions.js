@@ -9,6 +9,7 @@ import { useDispatch, useSelector } from "react-redux";
 import htmlToDraft from 'html-to-draftjs';
 import Editor from "../../share/Editor/Editor";
 import {  getTermsAndConditions, updateTermsAndConditions } from "src/redux/actions/about_us_action";
+import Page from "src/components/Page";
 
 export default function TermAndCondition() {
 
@@ -60,7 +61,7 @@ export default function TermAndCondition() {
     }, [aboutus && aboutus.id, isError])
 
     return (
-        <>
+        <Page title="Terms and Conditions">
             {
                 message.length > 0 ?
                     <Alert severity="success">{message}</Alert>
@@ -119,6 +120,6 @@ export default function TermAndCondition() {
                     </>
             }
 
-        </>
+        </Page>
     )
 }

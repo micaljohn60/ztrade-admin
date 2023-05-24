@@ -16,6 +16,7 @@ import { addRoleAndPermissionAction, fetchRolesAndPermissions } from 'src/redux/
 import Loading from 'src/share/Loading/Loading';
 import PermissionDenied from 'src/share/permission_denied/PermissionDenied';
 import RoleAndPermissionDialog from './components/RoleAndPermissionsDialog';
+import Page from 'src/components/Page';
 
 
 export default function RolesAndPermissions() {
@@ -83,7 +84,7 @@ export default function RolesAndPermissions() {
 
 
     return (
-        <>
+        <Page title="Roles and Permissions">
             {
                 staffLoading || isLoading?
                     <Loading />
@@ -227,6 +228,6 @@ export default function RolesAndPermissions() {
 
             }
 
-        </>
+        </Page>
     )
 }

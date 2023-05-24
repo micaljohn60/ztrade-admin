@@ -130,7 +130,7 @@ export default function SliderEditDialog({ sliderName, sliderId, stores, storeId
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancle</Button>
+          <Button onClick={handleClose}>Cancel</Button>
           <Button onClick={updateAction} autoFocus>
             Yes
           </Button>

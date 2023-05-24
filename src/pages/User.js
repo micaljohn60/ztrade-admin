@@ -203,10 +203,10 @@ export default function User() {
                   <>
                     <Stack direction="row" alignItems="center" justifyContent="space-between" mb={5}>
                       <Typography variant="h4" gutterBottom>
-                        User
+                        Staffs
                       </Typography>
                       <Button variant="contained" component={RouterLink} to="/dashboard/addnewusers" startIcon={<Iconify icon="eva:plus-fill" />}>
-                        New User
+                        New Staff
                       </Button>
                     </Stack>
 

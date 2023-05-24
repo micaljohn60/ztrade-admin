@@ -53,7 +53,7 @@ export default function SliderDeleteDialog({sliderName,sliderId,}) {
             </DialogContentText>
             </DialogContent>
             <DialogActions>
-            <Button onClick={handleClose}>Cancle</Button>
+            <Button onClick={handleClose}>Cancel</Button>
             <Button onClick={handleDelete} autoFocus>
                 Yes
             </Button>

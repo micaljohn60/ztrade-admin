@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import { fetchSiteSetting, updateSiteSetting } from "src/redux/actions/site_setting_action";
 import Iconify from "src/components/Iconify";
 import Loading from "src/share/Loading/Loading";
+import Page from "src/components/Page";
 
 const Input = styled('input')({
     display: 'none',
@@ -19,13 +20,14 @@ export default function SiteSetting() {
     const [webRegiserIcon, change4] = useState(null);
     const [webIcon, change5] = useState(null);
     const [webTabIcon, change6] = useState(null);
-    const [facebookUrl, setFacebookUrl] = useState(null);
-    const [instagramUrl, setInstagramUrl] = useState(null);
-    const [youtubeUrl, setYoutubeUrl] = useState(null);
-    const [phoneNumber, setPhoneNumber] = useState(null);
-    const [address, setAddress] = useState(null);
-    const [short_description, setShortDescription] = useState(null);
-    const [email, setEmail] = useState(null);
+    const [facebookUrl, setFacebookUrl] = useState("");
+    const [instagramUrl, setInstagramUrl] = useState("");
+    const [linkedinurl, setLinkedinUrl] = useState("");
+    const [youtubeUrl, setYoutubeUrl] = useState("");
+    const [phoneNumber, setPhoneNumber] = useState("");
+    const [address, setAddress] = useState("");
+    const [short_description, setShortDescription] = useState("");
+    const [email, setEmail] = useState("");
 
     const updateData = () => {
         const formData = new FormData();
@@ -37,22 +39,20 @@ export default function SiteSetting() {
         formData.append("web_tab_icon", webTabIcon);
         formData.append("facebook_url", facebookUrl);
         formData.append("instagram_url", instagramUrl);
+        formData.append("linkedin_url", linkedinurl);
         formData.append("youtube_url", youtubeUrl);
         formData.append("phonenumber", phoneNumber);
         formData.append("address", address);
         formData.append("short_description", short_description);
         formData.append("email", email);
-        console.log(facebookUrl)
         dispatch(updateSiteSetting(formData))
     }
     const urls = [
-        "https://appstaging.ztrademm.com/storage/site_setting/mobile_login_icon.jpg",
-        "https://appstaging.ztrademm.com/storage/site_setting/web_login_icon.jpg",
-        "https://appstaging.ztrademm.com/storage/site_setting/mobile_loading_icon.jpg",
+
         "https://appstaging.ztrademm.com/storage/site_setting/web_register_icon.jpg",
         "https://appstaging.ztrademm.com/storage/site_setting/web_tab_icon.jpg"
     ]
-    const names = ["mobile_login_icon", "web_login_icon", "mobile_loading_icon", "web_register_icon", "web_tab_icon"]
+    const names = [ "web_admin_icon", "web_tab_icon"]
 
     const siteSettingLoading = useSelector((state) => state.siteSetting.loading);
     const siteSettingData = useSelector((state) => state.siteSetting.site_setting);
@@ -67,7 +67,7 @@ export default function SiteSetting() {
                 siteSettingLoading ?
                     <Loading />
                     :
-                    <div className="">
+                    <Page title="Site Setting">
                         <div className="">
                             <h1>Icons</h1>
                             <Button
@@ -82,7 +82,7 @@ export default function SiteSetting() {
                             <Grid container spacing={2}>
                                 <Grid item>
                                     <Grid container justifyContent="center" spacing={3}>
-                                        {[0, 1, 2, 3, 4].map((value) => (
+                                        {[0, 1,].map((value) => (
                                             <Grid key={value} item>
                                                 <Box sx={{ boxShadow: 1 }}>
                                                     <Paper
@@ -195,17 +195,17 @@ export default function SiteSetting() {
                                 </Grid>
                             </Grid>
 
-                            <Typography variant="h3" sx={{ mt: 4 }}>Social Medias</Typography>
+                            <Typography variant="h3" sx={{ mt: 4 }}>    </Typography>
 
                             <Box display="flex" flexDirection="row">
                                 <TextField id="outlined-basic" defaultValue={siteSettingData[0].facebook_url} label="Facebook Url" onChange={(e) => setFacebookUrl
                                     (e.target.value)} variant="outlined" sx={{ width: "500px", m: 1 }} />
-                                <TextField id="outlined-basic" defaultValue={siteSettingData[0].instagram_url} label="Instagram Url" onChange={(e) => setInstagramUrl
+                                <TextField id="outlined-basic" defaultValue={siteSettingData[0].instagram_url} label="Wechat Url" onChange={(e) => setInstagramUrl
                                     (e.target.value)} variant="outlined" sx={{ width: "500px", m: 1 }} />
                             </Box>
                             <Box display="flex" flexDirection="row">
-                                <TextField id="outlined-basic" defaultValue={siteSettingData[0].youtube_url} label="Youtube Url" onChange={(e) => setYoutubeUrl(e.target.value)} variant="outlined" sx={{ width: "500px", m: 1 }} />
-                                <TextField id="outlined-basic" label="Linkedin Url" variant="outlined" sx={{ width: "500px", m: 1 }} />
+                                <TextField id="outlined-basic" defaultValue={siteSettingData[0].youtube_url} label="Whatapp Url" onChange={(e) => setYoutubeUrl(e.target.value)} variant="outlined" sx={{ width: "500px", m: 1 }} />
+                                <TextField id="outlined-basic" label="Viber Url" defaultValue={siteSettingData[0].linkedin_url} onChange={(e) => setLinkedinUrl(e.target.value)}  variant="outlined" sx={{ width: "500px", m: 1 }} />
                             </Box>
 
                             <Typography variant="h3" sx={{ mt: 4 }}>Compnay Information</Typography>
@@ -223,7 +223,7 @@ export default function SiteSetting() {
 
 
                         </div>
-                    </div>
+                    </Page>
             }
         </>
     )

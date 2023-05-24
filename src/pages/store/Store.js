@@ -169,7 +169,9 @@ export default function Store() {
                             <Box display="flex"
                                 alignItems="center"
                                 justifyContent="center" >
-                                <TextField id="outlined-basic" label="Brand Name    " variant="outlined" fullWidth sx={{ m: 2 }} onChange={e => setName(e.target.value)} />
+                                <TextField 
+                                inputProps={{ maxLength: 20 }}
+                                id="outlined-basic" label="Brand Name    " variant="outlined" fullWidth sx={{ m: 2 }} onChange={e => setName(e.target.value)} />
                             </Box>
 
                             <Grid sx={{ flexGrow: 1 }} container spacing={2}>

@@ -32,6 +32,7 @@ const Input = styled('input')({
 // });
 export default function CreateProduct() {
   const [open, setOpen] = useState(false);
+  const [wordcount, setWordCount] = useState(0);
 
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
@@ -185,7 +186,11 @@ export default function CreateProduct() {
         "percentage_id": 1,
         "store_id": storeId
       }
-      setLoading(true)
+      // setLoading(true)
+      for (let i = 0; i < images.length; i += 1) {
+        console.log(formData.get(`thumbnails${i}`));
+      }
+    
       dispatch(addProduct(formData))
     }
 
@@ -305,15 +310,21 @@ export default function CreateProduct() {
 
                   alignItems="center"
                   justifyContent="center" >
-                  <TextField id="outlined-basic" onChange={e => setName(e.target.value)} label="Product Title" variant="outlined" style={{ width: 800 }} sx={{ m: 2 }} error={name === ""} helperText={name === "" ? 'Empty field!' : ' '} />
+                  <TextField 
+                  inputProps={{ maxLength: 254 }}
+                  id="outlined-basic" onChange={e => setName(e.target.value)} label="Product Title" variant="outlined" style={{ width: 800 }} sx={{ m: 2 }} error={name === ""} helperText={name === "" ? 'Empty field!' : ' '} />
 
                 </Box>
                 <Box
                   display="flex"
                   alignItems="center"
                   justifyContent="center" >
-                  <TextField id="outlined-basic" onChange={e => setDescription(e.target.value)} error={description === ""} helperText={description === "" ? 'Empty field!' : ' '} label="Product Description Description" variant="outlined" style={{ width: 800 }} multiline rows={5} rowsMax={10} placeholder="Description of Job" fullWidth sx={{ m: 2 }} />
+                  <TextField
+                  inputProps={{ maxLength: 254 }}
+                  id="outlined-basic" onChange={e => setDescription(e.target.value)} error={description === ""} helperText={description === "" ? 'Empty field!' : `${description.length}/254`} label='Product Description'   variant="outlined" style={{ width: 800 }} multiline rows={5} rowsMax={10} placeholder="Description of Job" fullWidth sx={{ m: 2 }} />
+                  
                 </Box>
+                
 
                 <Box display="flex" alignItems="center" justifyContent="Center">
                   <FormControl>

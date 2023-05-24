@@ -177,7 +177,7 @@ export default function DeleteCategoryDialog({ categoryImage, categoryName, cate
 
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancle</Button>
+          <Button onClick={handleClose}>Cancel</Button>
           {
             categoryUpdatePermission ?
               <Button onClick={handleUpdate} autoFocus>
@@ -198,7 +198,7 @@ export default function DeleteCategoryDialog({ categoryImage, categoryName, cate
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose}>Cancle</Button>
+          <Button onClick={handleClose}>Cancel</Button>
           {
             categoryDeletePermission ?
               <Button onClick={handleDelete} autoFocus>
