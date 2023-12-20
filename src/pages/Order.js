@@ -173,10 +173,12 @@ export default function User() {
         dispatch(fetchStaffs())
         dispatch(fetchOrders())
         dispatch(fetchRolesAndPermissions())
+
         if (!staffLoading) {
             setUserPermission(staff.permissions)
         }
-    }, [staff && cus_orders && staff.permissions])
+
+    }, [staff && staff.permissions])
 
     return (
         <Page title="User">
